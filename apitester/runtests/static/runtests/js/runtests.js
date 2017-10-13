@@ -29,6 +29,7 @@ $(function() {
 	});
 	$('.runner button').click(function() {
 		$('#results').empty();
+		window.scrollTo(0, 0);
 		var test = $(this).parent().parent().parent().data('test');
 		runTest(test);
 	});
