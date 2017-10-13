@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="home">
+	<h1>Welcome to API Tester</h1>
+
+	<div class="well" id="intro">
+		This app lets you test API calls of the sandbox at <a href="{{ API_HOST }}">{{ API_HOST }}</a>. You have to <a href="{{ API_HOST }}/user_mgt/sign_up" title="Register at {{ API_HOST }}">register</a> an account before being able to proceed. The logged-in user needs to have specific roles granted to use the tester, probably super admin rights would be most helpful.
+	</div>
+
+
+{% if not user.is_authenticated %}
+	<div class="row" id="login">
+		<div class="col-xs-12 col-sm-3">
+			<label for="authentication-select"><h2>Authenticate</h2></label>
+			<select class="form-control" id="authentication-select">
+				<option value="">Choose ...</option>
+				<option value="oauth">OAuth 1</option>
+				<option value="directlogin">DirectLogin</option>
+				<option value="gatewaylogin">GatewayLogin</option>
+			</select>
+		</div>
+
+		<div class="col-xs-12 col-sm-9">
+			<div class="authentication-method" id="authenticate-oauth">
+				<h3>OAuth</h3>
+				<a class="btn btn-primary" href="{% url 'oauth-initiate' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}">Proceed to authentication server</a>
+			</div>
+			<div class="authentication-method" id="authenticate-directlogin">
+				<h3>DirectLogin</h3>
+				<form action="{% url 'directlogin' %}" method="post">
+					{% csrf_token %}
+					<div class="form-group">
+						<label for="username">Username:</label>
+						{{ directlogin_form.username }}
+					</div>
+					<div class="form-group">
+						<label for="password">Password:</label>
+						{{ directlogin_form.password }}
+					</div>
+					<div class="form-group">
+						<label for="consumer-key">Consumer Key:</label>
+						{{ directlogin_form.consumer_key }}
+					</div>
+					<button class="btn btn-primary">Login</button>
+				</form>
+			</div>
+			<div class="authentication-method" id="authenticate-gatewaylogin">
+				<h3>GatewayLogin</h3>
+				<form action="{% url 'gatewaylogin' %}" method="post">
+					{% csrf_token %}
+					<div class="form-group">
+						<label for="username">Username:</label>
+						{{ gatewaylogin_form.username }}
+					</div>
+					<div class="form-group">
+						<label for="secret">Secret:</label>
+						{{ gatewaylogin_form.secret }}
+					</div>
+					<button class="btn btn-primary">Login</button>
+				</form>
+
+			</div>
+		</div>
+	</div>
+{% endif %}
+
+	<p class="text-center">
+	<a href="https://openbankproject.com"><img class="img-responsive" src="https://static.openbankproject.com/images/OBP/OBP_full_web.png" alt="OBP logo" /></a>
+	</p>
+</div>
+
+</div>
+{% endblock %}

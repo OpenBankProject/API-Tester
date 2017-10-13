@@ -1,0 +1,75 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="description" content="An application consuming the Open Bank Project API to manage consumers, users, customers, metrics and config">
+		<meta name="author" content="TESOBE, Sebastian Henschel">
+		<title>{% block page_title %}API Tester{% endblock page_title %}</title>
+		<link rel="icon" type="image/png" href="{% static 'img/favicon.ico' %}" />
+		<link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+		<link href="{% static 'css/base.css' %}" rel="stylesheet">
+		{% block extracss %}{% endblock extracss %}
+	</head>
+<body>
+	<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+		<div class="container">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="{% url 'home' %}"><img src="https://static.openbankproject.com/images/OBP/favicon.png" alt="brand" /></a>
+			</div>
+			<div id="navbar" class="collapse navbar-collapse">
+				<ul class="nav navbar-nav">
+					{% url "runtests-index" as runtests_index_url %}
+					<li{% if runtests_index_url in request.path  %} class="active"{% endif %}><a href="{{ runtests_index_url }}">Run tests</a></li>
+				</ul>
+				<ul class="nav navbar-nav navbar-right">
+					<li>
+{% if user.is_authenticated %}
+                    <p class="navbar-btn"><a href="{% url 'oauth-logout' %}" class="btn btn-default">Logout {{ API_USERNAME }}</a></p>
+{% endif %}
+					</li>
+				</ul>
+			</div><!--/.nav-collapse -->
+		</div>
+	</nav>
+
+{% if messages %}
+	<div class="container messages">
+	{% for message in messages %}
+	<div class="alert alert-dismissible{% ifequal message.tags "error" %} alert-danger{% else %}{% ifequal message.tags "debug" %} alert-info{% else %} alert-{{ message.tags }}{% endifequal %}{% endifequal %}" role="alert">
+			<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			{{ message }}
+		</div>
+	{% endfor %}
+	</div>
+{% endif %}
+
+	<div class="container">
+{% block content %}{% endblock content %}
+	</div>
+
+	<footer>
+		<div class="container">
+			<p class="text-muted">
+				<a title="API ROOT" href="{{ API_ROOT }}">API ROOT: {{ API_ROOT }}</a> |
+				<a title="Open Bank Project" href="https://openbankproject.com">Open Bank Project</a> |
+				Powered by <a title="TESOBE" href="http://tesobe.com">TESOBE</a> |
+				<small>Copyright &copy; 2016</small>
+			</p>
+		</div>
+	</footer>
+
+	<script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>
+	<script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
+	<script src="{% static 'js/base.js' %}"></script>
+{% block extrajs %}{% endblock extrajs %}
+</body>
+</html>
