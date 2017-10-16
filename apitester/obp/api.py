@@ -70,14 +70,21 @@ class API(object):
         return self.handle_response(request, response)
 
     def get_swagger(self, request):
-        """Gets the swagger definition form the API"""
-        # FIXME: settings base path is a race condition!
-        self.set_base_path(settings.API_SWAGGER_BASE_PATH)
-        urlpath = '/resource-docs/v3.0.0/swagger'
-        response = self.get(request, urlpath)
-        # Set base path back
-        self.set_base_path()
-        return response
+        """Gets the swagger definition from the API"""
+        # TODO: Might be better with a proper caching backend
+        if 'swagger' not in request.session:
+            # FIXME: settings base path is a race condition!
+            self.set_base_path(settings.API_SWAGGER_BASE_PATH)
+            urlpath = '/resource-docs/v3.0.0/swagger'
+            response = self.get(request, urlpath)
+            # Set base path back
+            self.set_base_path()
+            request.session['swagger'] = response
+            request.session.modified = True
+            log(logging.INFO, 'Returning fresh swagger')
+        else:
+            log(logging.INFO, 'Returning cached swagger')
+        return request.session['swagger']
 
     def handle_response_404(self, response, prefix):
         # Stripping HTML body ...
