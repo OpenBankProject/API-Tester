@@ -16,7 +16,7 @@ from django.views.generic import RedirectView, FormView
 from requests_oauthlib import OAuth1Session
 from requests_oauthlib.oauth1_session import TokenRequestDenied
 
-from .api import api
+from .api import api, APIError
 from .authenticator import AuthenticatorError
 from .forms import DirectLoginForm, GatewayLoginForm
 from .oauth import OAuthAuthenticator
