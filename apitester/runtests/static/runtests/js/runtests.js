@@ -1,5 +1,6 @@
 $(function() {
-	function runTest(test) {
+	function runTest(runner) {
+		var test = runner.data('test')
 		var url = URL_RUNTEST_BASE.replace('all', test);
 		$.get(url, function (data) {
 			if (data['success']) {
@@ -13,25 +14,25 @@ $(function() {
 				}
 				msg += '</ul>';
 			}
-			$('#results').append(`<div class="alert alert-${alertType}">${data['config']['summary']}<br />${data['test']}<br />${msg}<br />${data['result']}<br />Took ${data['execution_time']} ms</div>`);
+			var result = `<div class="alert alert-${alertType}">${data['config']['summary']}<br />${data['test']}<br />${msg}<br />${data['result']}<br />Took ${data['execution_time']} ms</div>`;
+			$(runner.find('.result')).append(result);
 		});
 	}
 
 	$('#run').click(function() {
-		$('#results').empty();
+		$('.result').empty();
 		var runners = $('.runner');
 		for (var i=0; i < runners.length; i++) {
 			var runner = $(runners[i]);
 			if (runner.find('input').is(':checked')) {
-				runTest(runner.data('test'));
+				runTest(runner);
 			}
 		}
 	});
 	$('.runner button').click(function() {
-		$('#results').empty();
-		window.scrollTo(0, 0);
-		var test = $(this).parent().parent().parent().data('test');
-		runTest(test);
+		var runner = $(this).parent().parent().parent();
+		$(runner).find('.result').empty();
+		runTest(runner);
 	});
 
 	$('#checkNone').click(function() {

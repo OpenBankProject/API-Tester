@@ -5,8 +5,11 @@
 }
 #runtests .runner {
 	border-bottom: 1px solid black;
-	margin-bottom: 10px;
+	margin: 10px 0;
 }
 #runtests .runner .col-xs-3 {
 	padding-left: 0;
+}
+#runtests .result .alert {
+	margin-bottom: 10px;
 }
