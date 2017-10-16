@@ -125,7 +125,8 @@ class API(object):
     def get_session(self, request):
         """
         Gets a session object to use for subsequent requests to the API
-        TODO: Handle deserialization properly
+        TODO: Handle (de)serialization of Authenticator objects properly,
+        to get rid of if/else
         """
         session = None
         if 'oauth' in request.session:
@@ -140,6 +141,20 @@ class API(object):
         else:
             raise APIError('No token found in session!')
         return authenticator.get_session()
+
+    def clear_session(self, request):
+        """
+        Clear API-related session data in request
+        TODO: Adapt accordingly once get_session has been improved
+        """
+        keys = ['oauth', 'directlogin', 'gatewaylogin', 'swagger']
+        modified = False
+        for key in keys:
+            if key in request:
+                del request.session[key]
+                modified = True
+        if modified:  # do not change 'modified' if not explicitly changed here
+            request.session.modified = True
 
     def call(self, request, method='GET', urlpath='', payload=None):
         """Workhorse which actually calls the API"""

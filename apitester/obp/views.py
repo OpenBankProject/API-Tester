@@ -153,11 +153,5 @@ class LogoutView(RedirectView):
 
     def get_redirect_url(self, *args, **kwargs):
         logout(self.request)
-        try:
-            del self.request.session['oauth']
-            del self.request.session['directlogin']
-            del self.request.session['gatewaylogin']
-        except KeyError:
-            pass
-        self.request.session.modified = True
+        api.clear_session(self.request)
         return reverse('home')
