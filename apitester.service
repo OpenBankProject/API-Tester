@@ -7,8 +7,8 @@ User=deploy
 Group=deploy
 SyslogIdentifier=API-Tester
 Restart=always
-WorkingDirectory=/var/www/apitester/API-Test/apitester
-ExecStart=/var/www/apitester/venv/bin/gunicorn --user deploy --group deploy --config /var/www/apitester/API-Test/gunicorn.conf.py apitester.wsgi
+WorkingDirectory=/var/www/apitester/API-Tester/apitester
+ExecStart=/var/www/apitester/venv/bin/gunicorn --user deploy --group deploy --config /var/www/apitester/API-Tester/gunicorn.conf.py apitester.wsgi
 
 [Install]
 WantedBy=multi-user.target
