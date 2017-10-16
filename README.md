@@ -2,7 +2,6 @@
 
 This is a Django project to test the Open Bank Project API from the outside.
 
-To use this app, you need to authenticate against a sandbox where you have to have registered an account beforehand.
 
 
 # Installation (development)
@@ -34,6 +33,7 @@ apitester/
     └── lib
 ```
 
+
 ## Install dependencies
 
 ```bash
@@ -42,9 +42,10 @@ $ source ../venv/bin/activate
 (venv)$ pip install -r requirements.txt
 ```
 
+
 ## Configure settings
 
-Edit `apitester/apitester/local_settings.py`:
+Create and edit `apitester/apitester/local_settings.py`:
 
 ```python
 # Used internally by Django, can be anything of your choice
@@ -70,7 +71,7 @@ DATABASES = {
 }
 ```
 
-The application's authentication is API-driven. However, to make use of Django's authentication framework and sessions, there is a minimal requirement of a database. Per default, sqlite is used, but you can configure any Django-supported backend you want. Please lookup the appropriate documentation.
+The application's authentication is API-driven. However, to make use of Django's authentication framework and sessions, there is a minimal requirement of a database.
 
 
 ## Initialise database
@@ -78,6 +79,7 @@ The application's authentication is API-driven. However, to make use of Django's
 ```bash
 (venv)$ ./apitester/manage.py migrate
 ```
+
 
 ## Run the app
 
@@ -88,9 +90,11 @@ The application's authentication is API-driven. However, to make use of Django's
 The application should be available at `http://localhost:8000`.
 
 
+
 # Installation (production)
 
 Execute the same steps as for development, but do not run the app.
+
 
 ## Settings
 
@@ -115,6 +119,7 @@ EMAIL_HOST = 'mail.example.com'
 EMAIL_TLS = True
 ```
 
+
 ## Static files
 
 The app's static files, e.g. Javascript, CSS and images need to be collected and made available to a webserver. Run
@@ -125,6 +130,7 @@ The app's static files, e.g. Javascript, CSS and images need to be collected and
 
 The output will show where they are collected to (`settings.STATIC_ROOT`).
 
+
 ## Web application server
 
 Instead of Django's built-in runserver, you need a proper web application server to run the app, e.g. `gunicorn`. It should have been installed already as a dependency and you can use the provided `gunicorn.conf.py`. Run it like
@@ -134,7 +140,6 @@ Instead of Django's built-in runserver, you need a proper web application server
 ```
 
 - `gunicorn` does not start successfully when omitting the directory change and using `apitester.apitester.wsgi` as program.
-- The user running  `gunicorn` needs to have write access to the _directory_ containing the database, as well as the database file itself.
 - The app's output is logged to `gunicorn`'s error logfile (see `gunicorn.conf.py` for location)
 
 
@@ -162,7 +167,6 @@ If you need to edit the service file afterwards, it needs to be reloaded as well
 # /bin/systemctl restart apitester
 ```
 
-
 ### supervisor
 
 Stick the provided file `supervisor.apitester.conf` into `/etc/supervisor/conf.d/`, edit to suit your installation and restart supervisor (probably as root):
@@ -171,6 +175,7 @@ Stick the provided file `supervisor.apitester.conf` into `/etc/supervisor/conf.d
 # /bin/systemctl restart supervisor
 ```
 
+
 ## Webserver
 
 Finally, use a webserver like `nginx` or `apache` as a frontend. It serves static files from the directory where `collectstatic` puts them and acts as a reverse proxy for gunicorn. Stick the provided `nginx.apitester.conf` into `/etc/nginx/sites-enabled/`, edit it and reload the webserver (probably as root):
@@ -178,6 +183,26 @@ Finally, use a webserver like `nginx` or `apache` as a frontend. It serves stati
 ```bash
 # /bin/systemctl reload nginx
 ```
+
+
+
+# Authentication
+
+
+## OAuth
+
+When selecting `OAuth` for authentication, the user is redirected to the login screen of the API from which the user is then redirected back to the API Tester. For this to work, the API Tester needs to be a registered consumer and the `OAUTH_` settings need to be set correctly.
+
+
+## DirectLogin
+
+Before being able to use `DirectLogin`, the user needs to create a consumer at the API, e.g. http://127.0.0.1:8080/consumer-registration because the user needs to supply a consumer key in addition to username and password.
+
+
+## GatewayLogin
+
+For `GatewayLogin` to work, the user's provider has to be set to `Gateway` in field `resourceuser`.`provider_` in the database. The user also needs to know the pre-shared secret between the gateway and the API.
+
 
 
 # Management
@@ -190,5 +215,5 @@ The app should tell you if your logged in user does not have the proper role to 
 
 Be aware of file permission issues and preconfigured paths to executables (system env versus virtual env)!
 
-Have fun,
+Enjoy,
  TESOBE
