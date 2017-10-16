@@ -6,17 +6,13 @@ Views for OBP app
 
 import hashlib
 
-from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.models import User
-from django.urls import reverse, reverse
+from django.urls import reverse
 from django.views.generic import RedirectView, FormView
 
-from requests_oauthlib import OAuth1Session
-from requests_oauthlib.oauth1_session import TokenRequestDenied
-
-from .api import api, APIError
+from .api import API, APIError
 from .authenticator import AuthenticatorError
 from .forms import DirectLoginForm, GatewayLoginForm
 from .oauth import OAuthAuthenticator
@@ -29,8 +25,9 @@ class LoginToDjangoMixin(object):
         Logs the user into Django
         Kind of faking it to establish if a user is authenticated later on
         """
+        api = API(self.request.session.get('obp'))
         try:
-            data = api.get(self.request, '/users/current')
+            data = api.get('/users/current')
         except APIError as err:
             messages.error(self.request, err)
             return False
@@ -64,14 +61,18 @@ class OAuthInitiateView(RedirectView):
         callback_uri = self.get_callback_uri(self.request)
         try:
             authenticator = OAuthAuthenticator()
-            authorization_url = authenticator.get_authorization_url(callback_uri)
+            authorization_url = authenticator.get_authorization_url(
+                callback_uri)
         except AuthenticatorError as err:
             messages.error(self.request, err)
             return reverse('home')
         else:
-            self.request.session['oauth'] = {
-                'token': authenticator.token,
-                'secret': authenticator.secret,
+            self.request.session['obp'] = {
+                'authenticator': 'obp.oauth.OAuthAuthenticator',
+                'data': {
+                    'token': authenticator.token,
+                    'secret': authenticator.secret,
+                }
             }
             self.request.session.modified = True
             return authorization_url
@@ -81,21 +82,22 @@ class OAuthAuthorizeView(RedirectView, LoginToDjangoMixin):
     """View to authorize user after OAuth 1 initiation"""
 
     def get_redirect_url(self, *args, **kwargs):
-        kwargs = self.request.session.get('oauth').values()
-        authenticator = OAuthAuthenticator(*kwargs)
+        obp = self.request.session.get('obp')
+        args = obp.get('data').values()
+        authenticator = OAuthAuthenticator(*args)
         authorization_url = self.request.build_absolute_uri()
         try:
-            authenticator.update_token(authorization_url)
+            authenticator.set_access_token(authorization_url)
         except AuthenticatorError as err:
             messages.error(self.request, err)
         else:
-            self.request.session['oauth'] = {
+            self.request.session['obp']['data'] = {
                 'token': authenticator.token,
                 'secret': authenticator.secret,
             }
             self.request.session.modified = True
             self.login_to_django()
-            messages.success(self.request, 'OAuth login successful!');
+            messages.success(self.request, 'OAuth login successful!')
         redirect_url = self.request.GET.get('next', reverse('runtests-index'))
         return redirect_url
 
@@ -106,7 +108,7 @@ class DirectLoginView(FormView, LoginToDjangoMixin):
     template_name = 'obp/directlogin.html'
 
     def get_success_url(self):
-        messages.success(self.request, 'DirectLogin successful!');
+        messages.success(self.request, 'DirectLogin successful!')
         return reverse('runtests-index')
 
     def form_valid(self, form):
@@ -115,9 +117,11 @@ class DirectLoginView(FormView, LoginToDjangoMixin):
         future requests. It also logs in to Django.
         """
         authenticator = form.cleaned_data['authenticator']
-        # TODO: Find a better way to handle serialization
-        self.request.session['directlogin'] = {
-            'token': authenticator.token,
+        self.request.session['obp'] = {
+            'authenticator': 'obp.directlogin.DirectLoginAuthenticator',
+            'data': {
+                'token': authenticator.token,
+            }
         }
         self.request.session.modified = True
         self.login_to_django()
@@ -130,7 +134,7 @@ class GatewayLoginView(FormView, LoginToDjangoMixin):
     template_name = 'obp/gatewaylogin.html'
 
     def get_success_url(self):
-        messages.success(self.request, 'GatewayLogin successful!');
+        messages.success(self.request, 'GatewayLogin successful!')
         return reverse('runtests-index')
 
     def form_valid(self, form):
@@ -139,9 +143,11 @@ class GatewayLoginView(FormView, LoginToDjangoMixin):
         future requests. It also logs in to Django.
         """
         authenticator = form.cleaned_data['authenticator']
-        # TODO: Find a better way to handle serialization
-        self.request.session['gatewaylogin'] = {
-            'token': authenticator.token,
+        self.request.session['obp'] = {
+            'authenticator': 'obp.gatewaylogin.GatewayLoginAuthenticator',
+            'data': {
+                'token': authenticator.token,
+            }
         }
         self.request.session.modified = True
         self.login_to_django()
@@ -153,5 +159,7 @@ class LogoutView(RedirectView):
 
     def get_redirect_url(self, *args, **kwargs):
         logout(self.request)
-        api.clear_session(self.request)
+        if 'obp' in self.request.session:
+            del self.request.session['obp']
+            self.request.session.modified = True
         return reverse('home')

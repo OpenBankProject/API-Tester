@@ -3,13 +3,11 @@
 Views of runtests app
 """
 
-from django.conf import settings
-from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
 from django.views.generic import TemplateView
 
-from obp.api import api, APIError
+from obp.api import API, APIError
 
 
 class IndexView(LoginRequiredMixin, TemplateView):
@@ -18,7 +16,8 @@ class IndexView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)
-        swagger = api.get_swagger(self.request)
+        api = API(self.request.session.get('obp'))
+        swagger = api.get_swagger()
         calls = []
         for path, data in swagger['paths'].items():
             # Only GET requests for now
@@ -52,7 +51,7 @@ class RunView(LoginRequiredMixin, TemplateView):
 
     def get_config(self, test):
         test_method, test_path = test.split(' ')
-        swagger = api.get_swagger(self.request)
+        swagger = self.api.get_swagger()
         for path, data in swagger['paths'].items():
             if test_path == path and test_method in data:
                 config = {
@@ -68,8 +67,7 @@ class RunView(LoginRequiredMixin, TemplateView):
         config = context['config']
         # Test if it runs
         try:
-            response = api.call(
-                self.request, config['method'], config['urlpath'])
+            response = self.api.call(config['method'], config['urlpath'])
             context.update({
                 'result': response.text,
                 'execution_time': response.execution_time,
@@ -98,6 +96,7 @@ class RunView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(RunView, self).get_context_data(**kwargs)
+        self.api = API(self.request.session.get('obp'))
         context.update({
             'config': self.get_config(kwargs['test']),
             'result': None,
@@ -107,7 +106,7 @@ class RunView(LoginRequiredMixin, TemplateView):
         })
         if not context['config']:
             msg = 'Test {} is not configured!'.format(kwargs['test'])
-            context['messages'].append(msg);
+            context['messages'].append(msg)
             context['success'] = False
             return context
         self.run_test(context)

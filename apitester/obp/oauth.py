@@ -3,6 +3,8 @@
 OAuth authenticator for OBP app
 """
 
+import logging
+import time
 
 from django.conf import settings
 
@@ -11,6 +13,9 @@ from requests_oauthlib import OAuth1Session
 from requests_oauthlib.oauth1_session import TokenRequestDenied
 
 from .authenticator import Authenticator, AuthenticatorError
+
+
+LOGGER = logging.getLogger(__name__)
 
 
 class OAuthAuthenticator(Authenticator):
@@ -39,9 +44,12 @@ class OAuthAuthenticator(Authenticator):
             self.secret = response.get('oauth_token_secret')
         url = settings.API_HOST + settings.OAUTH_AUTHORIZATION_PATH
         authorization_url = session.authorization_url(url)
+        LOGGER.log(logging.INFO, 'Initial token {}, secret {}'.format(
+            self.token, self.secret))
+        #time.sleep(5)  # Makes things more stable when talking to API (wtf?)
         return authorization_url
 
-    def update_token(self, authorization_url):
+    def set_access_token(self, authorization_url):
         session = OAuth1Session(
             settings.OAUTH_CONSUMER_KEY,
             settings.OAUTH_CONSUMER_SECRET,
@@ -57,6 +65,9 @@ class OAuthAuthenticator(Authenticator):
         else:
             self.token = response.get('oauth_token')
             self.secret = response.get('oauth_token_secret')
+        LOGGER.log(logging.INFO, 'Updated token {}, secret {}'.format(
+            self.token, self.secret))
+        #time.sleep(1)  # Makes things more stable when talking to API (wtf?)
 
     def get_session(self):
         session = OAuth1Session(
