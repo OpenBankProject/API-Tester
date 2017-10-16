@@ -22,6 +22,29 @@ from .forms import DirectLoginForm, GatewayLoginForm
 from .oauth import OAuthAuthenticator
 
 
+class LoginToDjangoMixin(object):
+    """Mixin to login to Django from views."""
+    def login_to_django(self):
+        """
+        Logs the user into Django
+        Kind of faking it to establish if a user is authenticated later on
+        """
+        try:
+            data = api.get(self.request, '/users/current')
+        except APIError as err:
+            messages.error(self.request, err)
+            return False
+        else:
+            userid = data['user_id'] or data['email']
+            username = hashlib.sha256(userid.encode('utf-8')).hexdigest()
+            password = username
+            user, _ = User.objects.get_or_create(
+                username=username, password=password,
+            )
+            login(self.request, user)
+            return True
+
+
 class OAuthInitiateView(RedirectView):
     """View to initiate OAuth session"""
 
@@ -54,7 +77,7 @@ class OAuthInitiateView(RedirectView):
             return authorization_url
 
 
-class OAuthAuthorizeView(RedirectView):
+class OAuthAuthorizeView(RedirectView, LoginToDjangoMixin):
     """View to authorize user after OAuth 1 initiation"""
 
     def get_redirect_url(self, *args, **kwargs):
@@ -71,13 +94,13 @@ class OAuthAuthorizeView(RedirectView):
                 'secret': authenticator.secret,
             }
             self.request.session.modified = True
-            authenticator.login_to_django(self.request)
+            self.login_to_django()
             messages.success(self.request, 'OAuth login successful!');
         redirect_url = self.request.GET.get('next', reverse('runtests-index'))
         return redirect_url
 
 
-class DirectLoginView(FormView):
+class DirectLoginView(FormView, LoginToDjangoMixin):
     """View to login via DirectLogin"""
     form_class = DirectLoginForm
     template_name = 'obp/directlogin.html'
@@ -97,11 +120,11 @@ class DirectLoginView(FormView):
             'token': authenticator.token,
         }
         self.request.session.modified = True
-        authenticator.login_to_django(self.request)
+        self.login_to_django()
         return super(DirectLoginView, self).form_valid(form)
 
 
-class GatewayLoginView(FormView):
+class GatewayLoginView(FormView, LoginToDjangoMixin):
     """View to login via GatewayLogin"""
     form_class = GatewayLoginForm
     template_name = 'obp/gatewaylogin.html'
@@ -121,7 +144,7 @@ class GatewayLoginView(FormView):
             'token': authenticator.token,
         }
         self.request.session.modified = True
-        authenticator.login_to_django(self.request)
+        self.login_to_django()
         return super(GatewayLoginView, self).form_valid(form)
 
 
