@@ -14,7 +14,7 @@ $(function() {
 				}
 				msg += '</ul>';
 			}
-			var result = `<div class="alert alert-${alertType}">${data['config']['summary']}<br />${data['test']}<br />${msg}<br />${data['result']}<br />Took ${data['execution_time']} ms</div>`;
+			var result = `<div class="alert alert-${alertType}">${data['config']['summary']}<br />${data['test']}<br />${msg}<br /><pre>${data['result']}</pre><br />Took ${data['execution_time']} ms</div>`;
 			$(runner.find('.result')).append(result);
 		});
 	}

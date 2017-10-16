@@ -3,6 +3,8 @@
 Views of runtests app
 """
 
+import json
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
 from django.views.generic import TemplateView
@@ -68,8 +70,10 @@ class RunView(LoginRequiredMixin, TemplateView):
         # Test if it runs
         try:
             response = self.api.call(config['method'], config['urlpath'])
+            result = json.dumps(response.json(),
+                sort_keys=True, indent=2, separators=(',', ': '))
             context.update({
-                'result': response.text,
+                'result': result,
                 'execution_time': response.execution_time,
             })
         except APIError as err:
