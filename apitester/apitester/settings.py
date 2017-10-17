@@ -185,6 +185,9 @@ API_BASE_PATH = '/obp/v3.0.0'
 API_SWAGGER_BASE_PATH = '/obp/v1.4.0'
 
 
+# Always save session
+SESSION_SAVE_EVERY_REQUEST = True
+
 
 # TODO: Combine this with resource docs
 CALLS = {

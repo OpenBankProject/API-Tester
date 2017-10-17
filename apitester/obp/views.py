@@ -74,7 +74,6 @@ class OAuthInitiateView(RedirectView):
                     'secret': authenticator.secret,
                 }
             }
-            self.request.session.modified = True
             return authorization_url
 
 
@@ -95,7 +94,6 @@ class OAuthAuthorizeView(RedirectView, LoginToDjangoMixin):
                 'token': authenticator.token,
                 'secret': authenticator.secret,
             }
-            self.request.session.modified = True
             self.login_to_django()
             messages.success(self.request, 'OAuth login successful!')
         redirect_url = self.request.GET.get('next', reverse('runtests-index'))
@@ -123,7 +121,6 @@ class DirectLoginView(FormView, LoginToDjangoMixin):
                 'token': authenticator.token,
             }
         }
-        self.request.session.modified = True
         self.login_to_django()
         return super(DirectLoginView, self).form_valid(form)
 
@@ -149,7 +146,6 @@ class GatewayLoginView(FormView, LoginToDjangoMixin):
                 'token': authenticator.token,
             }
         }
-        self.request.session.modified = True
         self.login_to_django()
         return super(GatewayLoginView, self).form_valid(form)
 
@@ -161,5 +157,4 @@ class LogoutView(RedirectView):
         logout(self.request)
         if 'obp' in self.request.session:
             del self.request.session['obp']
-            self.request.session.modified = True
         return reverse('home')
