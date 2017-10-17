@@ -189,38 +189,6 @@ API_SWAGGER_BASE_PATH = '/obp/v1.4.0'
 SESSION_SAVE_EVERY_REQUEST = True
 
 
-# TODO: Combine this with resource docs
-CALLS = {
-    'getRoot': {
-        'urlpath': '',
-        'method': 'GET',
-        'responseCode': 200,
-        'responseHas': 'version',
-    },
-    'getConnectorMetrics': {
-        'urlpath': '/management/connector/metrics',
-        'method': 'GET',
-        'responseCode': 200,
-        'responseHas': 'metrics',
-    },
-    'getConsumer': {
-        'urlpath': '/management/consumers/CONSUMER_ID',
-        'method': 'GET',
-        'responseCode': 200,
-        'responseHas': 'consumer_id',
-    },
-    'getConsumers': {
-        'urlpath': '/management/consumers',
-        'method': 'GET',
-        'responseCode': 200,
-        'responseHas': 'list',
-    },
-}
-CALLS = OrderedDict(sorted(CALLS.items(), key=lambda t: t[0]))
-
-
-
-
 # Set OAuth client key/secret in apitester/local_settings.py
 OAUTH_CONSUMER_KEY = None
 OAUTH_CONSUMER_SECRET = None
