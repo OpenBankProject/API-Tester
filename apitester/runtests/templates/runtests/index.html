@@ -1,18 +1,104 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load static verbose_names %}
 
 {% block page_title %}{{ block.super }} / Run tests{% endblock page_title %}
 
 {% block content %}
-<div class="container" id="runtests">
+<div id="runtests">
 	<h1>Run tests</h1>
 
-	<div id="runbuttons">
-		<button class="btn btn-primary" id="run">RUN</button> <button class="btn btn-secondary" id="checkNone" />Uncheck all</button> <button class="btn btn-secondary" id="checkAll" />Check all</button>
+    <div id="configs" class="form-group">
+        <div class="row">
+            <div class="col-xs-12 col-sm-10">
+                <select id="select-config" class="form-control">
+                    <option value="">Select test configuration ...</option>
+                    {% for config in testconfigs %}
+                    <option value="{{ config.id }}">{{ config.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-xs-12 col-sm-2">
+                <a href="{% url 'runtests-testconfig-add' %}" class="btn btn-default">Create new</a>
+            </div>
+        </div>
+
+        {% for config in testconfigs %}
+        <div class="config hide" id="config-{{ config.id }}">
+            <h2>{{ config.name }} <a href="{% url 'runtests-testconfig-update' pk=config.id %}" class="btn btn-default">Edit</a> <a href="{% url 'runtests-testconfig-delete' pk=config.id %}" class="btn btn-secondary">Delete</a></h2>
+            <div class="well">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-4">
+                        {% get_verbose_field_name config "bank_id" %}: {{ config.bank_id }}
+                    </div>
+                    <div class="col-xs-12 col-sm-4">
+                        {% get_verbose_field_name config "branch_id" %}: {{ config.branch_id }}
+                    </div>
+                    <div class="col-xs-12 col-sm-4">
+                        {% get_verbose_field_name config "atm_id" %}: {{ config.atm_id }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-12 col-sm-4">
+                        {% get_verbose_field_name config "username" %}: {{ config.username}}
+                    </div>
+                    <div class="col-xs-12 col-sm-4">
+                        {% get_verbose_field_name config "user_id" %}: {{ config.user_id }}
+                    </div>
+                    <div class="col-xs-12 col-sm-4">
+                        {% get_verbose_field_name config "customer_id" %}: {{ config.customer_id }}
+                    </div>
+
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-12 col-sm-4">
+                        {% get_verbose_field_name config "provider_id" %}: {{ config.provider_id }}
+                    </div>
+                    <div class="col-xs-12 col-sm-4">
+                        {% get_verbose_field_name config "account_id" %}: {{ config.account_id }}
+                    </div>
+                    <div class="col-xs-12 col-sm-4">
+                        {% get_verbose_field_name config "view_id" %}: {{ config.view_id }}
+                    </div>
+
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-12 col-sm-4">
+                        {% get_verbose_field_name config "transaction_id" %}: {{ config.transaction_id }}
+                    </div>
+                    <div class="col-xs-12 col-sm-4">
+                        {% get_verbose_field_name config "other_account_id" %}: {{ config.other_account_id }}
+                    </div>
+                    <div class="col-xs-12 col-sm-4">
+                        {% get_verbose_field_name config "meeting_id" %}: {{ config.meeting_id }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-12 col-sm-4">
+                        {% get_verbose_field_name config "product_code" %}: {{ config.product_code }}
+                    </div>
+                    <div class="col-xs-12 col-sm-4">
+                        {% get_verbose_field_name config "from_currency_code" %}: {{ config.from_currency_code }}
+                    </div>
+                    <div class="col-xs-12 col-sm-4">
+                        {% get_verbose_field_name config "to_currency_code" %}: {{ config.to_currency_code }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+	<div class="hide" id="run-buttons">
+		<button class="btn btn-primary" id="run">Test selected</button> <button class="btn btn-secondary" id="checkNone" />Uncheck all</button> <button class="btn btn-secondary" id="checkAll" />Check all</button>
 	</div>
-	<ul id="test-list">
+
+    <ul class="hide" id="test-list">
 		{% for call in calls %}
-		<li class="runner" data-test="{{ call.method }} {{ call.urlpath }}">
+		<li class="runner" data-testpath="{{ call.urlpath }}">
 			<div class="row">
 				<div class="col-xs-2">
 					<div class="checkbox">
@@ -35,7 +121,7 @@
 {% block extrajs %}
 	<script type="text/javascript" src="{% static 'runtests/js/runtests.js' %}"></script>
 	<script type="text/javascript">
-		URL_RUNTEST_BASE = "{% url 'runtests-run' test='all' %}";
+		URL_RUNTEST_BASE = "{% url 'runtests-run' testmethod='testmethod' testpath='testpath' testconfig_id='0' %}";
 	</script>
 {% endblock extrajs %}
 

@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block page_title %}{{ block.super }} / Delete test configuration{% endblock page_title %}
+
+{% block content %}
+<div id="runtests">
+    <h1>Delete test configuration</h1>
+    <form action="" method="post">
+        {% csrf_token %}
+        <div class="well">Are you sure you want to delete "{{ object.name }}" ?</div>
+        <input type="submit" value="Delete" class="btn btn-danger" />
+        <a href="{% url 'runtests-index' %}" class="btn btn-default">No</a>
+    </form>
+</div>
+{% endblock content %}
+
+{% block extracss %}
+		<link href="{% static 'runtests/css/runtests.css' %}" rel="stylesheet">
+{% endblock extracss %}

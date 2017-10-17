@@ -1,3 +1,136 @@
-from django.db import models
+# -*- coding: utf-8 -*-
+"""
+Models of runtests app
+"""
 
-# Create your models here.
+from django.db import models
+from django.conf import settings
+
+
+class TestConfiguration(models.Model):
+    name = models.CharField(
+        max_length=255,
+        verbose_name='Name',
+        help_text='Name of the configuration',
+        blank=False,
+        null=False,
+    )
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        verbose_name='Owner',
+        help_text='User who owns this configuration',
+        blank=False,
+        null=False,
+    )
+    username = models.CharField(
+        max_length=255,
+        verbose_name='Username',
+        help_text='Username',
+        blank=True,
+        null=True,
+    )
+    bank_id = models.CharField(
+        max_length=255,
+        verbose_name='Bank Id',
+        help_text='Bank identifier',
+        blank=True,
+        null=True,
+    )
+    branch_id = models.CharField(
+        max_length=255,
+        verbose_name='Branch Id',
+        help_text='Bank branch identifier',
+        blank=True,
+        null=True,
+    )
+    atm_id = models.CharField(
+        max_length=255,
+        verbose_name='ATM Id',
+        help_text='ATM identifier',
+        blank=True,
+        null=True,
+    )
+    account_id = models.CharField(
+        max_length=255,
+        verbose_name='Account Id',
+        help_text='Account identifier',
+        blank=True,
+        null=True,
+    )
+    other_account_id = models.CharField(
+        max_length=255,
+        verbose_name='Other Account Id',
+        help_text='Account identifier of another account',
+        blank=True,
+        null=True,
+    )
+    view_id = models.CharField(
+        max_length=255,
+        verbose_name='View Id',
+        help_text='View identifier',
+        blank=True,
+        null=True,
+    )
+    user_id = models.CharField(
+        max_length=255,
+        verbose_name='User Id',
+        help_text='User identifier',
+        blank=True,
+        null=True,
+    )
+    provider_id = models.CharField(
+        max_length=255,
+        verbose_name='Provider Id',
+        help_text='Provider identifier',
+        blank=True,
+        null=True,
+    )
+    customer_id = models.CharField(
+        max_length=255,
+        verbose_name='Customer Id',
+        help_text='Customer identifier',
+        blank=True,
+        null=True,
+    )
+    transaction_id = models.CharField(
+        max_length=255,
+        verbose_name='Transaction Id',
+        help_text='Transaction identifier',
+        blank=True,
+        null=True,
+    )
+    from_currency_code = models.CharField(
+        max_length=255,
+        verbose_name='From Currency Code',
+        help_text='Currency code to convert from',
+        blank=True,
+        null=True,
+    )
+    to_currency_code = models.CharField(
+        max_length=255,
+        verbose_name='To Currency Code',
+        help_text='Currency code to convert to',
+        blank=True,
+        null=True,
+    )
+    product_code = models.CharField(
+        max_length=255,
+        verbose_name='Product Code',
+        help_text='Product code of a bank\'s product',
+        blank=True,
+        null=True,
+    )
+    meeting_id = models.CharField(
+        max_length=255,
+        verbose_name='Meeting Id',
+        help_text='Meeting identifier of a bank\s meeting',
+        blank=True,
+        null=True,
+    )
+
+    class Meta:
+        verbose_name = 'Test Configuration'
+        verbose_name_plural = 'Test Configurations'
+
+    def __str__(self):
+        return self.name

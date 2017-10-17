@@ -1,3 +1,9 @@
+#runtests form {
+    margin-bottom: 10px;
+}
+#runtests #configs {
+    margin-bottom: 50px;
+}
 #runtests #test-list {
 	list-style-type: none;
 	padding: 0;
@@ -16,4 +22,3 @@
 #runtests .result .alert {
 	margin: 0;
 }
-

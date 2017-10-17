@@ -5,12 +5,27 @@ Views of runtests app
 
 import json
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import PermissionDenied
 from django.http import JsonResponse
+from django.urls import reverse_lazy, reverse
 from django.views.generic import TemplateView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
 from obp.api import API, APIError
+
+from .forms import TestConfigurationForm
+from .models import TestConfiguration
+
+
+URLPATH_REPLACABLES = [
+    'USERNAME', 'BANK_ID', 'BRANCH_ID', 'ATM_ID', 'OTHER_ACCOUNT_ID',
+    'ACCOUNT_ID', 'VIEW_ID', 'USER_ID', 'PROVIDER_ID', 'CUSTOMER_ID',
+    'TRANSACTION_ID', 'FROM_CURRENCY_CODE', 'TO_CURRENCY_CODE', 'PRODUCT_CODE',
+    'MEETING_ID',
+]
 
 
 class IndexView(LoginRequiredMixin, TemplateView):
@@ -36,9 +51,12 @@ class IndexView(LoginRequiredMixin, TemplateView):
                         'responseCode': 200,
                     }
                     calls.append(call)
-
+            calls = sorted(calls, key=lambda call: call['summary'])
+            testconfigs = TestConfiguration.objects.filter(
+                owner=self.request.user)
             context.update({
                 'calls': calls,
+                'testconfigs': testconfigs,
             })
         return context
 
@@ -56,75 +74,141 @@ class RunView(LoginRequiredMixin, TemplateView):
             del context['view']
         return context
 
-    def get_config(self, test):
-        test_method, test_path = test.split(' ')
+    def api_replace(self, string, match, value):
+        """Helper to replace format strings from the API"""
+        # API sometimes uses '{match}' or 'match' to denote variables
+        return string.\
+            replace('{{{}}}'.format(match), value).\
+            replace(match, value)
+
+    def get_urlpath(self, testconfig, path):
+        """
+        Gets a URL path
+        where placeholders in given path are replaced by values from testconfig
+        """
+        urlpath = path
+        for match in URLPATH_REPLACABLES:
+            value = getattr(testconfig, match.lower())
+            if value:
+                urlpath = self.api_replace(urlpath, match, value)
+        return urlpath
+
+    def get_config(self, testmethod, testpath, testconfig_id):
+        """Gets test config from swagger and database"""
         try:
             swagger = self.api.get_swagger()
         except APIError as err:
             messages.error(self.request, err)
         else:
             for path, data in swagger['paths'].items():
-                if test_path == path and test_method in data:
+                if path == testpath and testmethod in data:
+                    try:
+                        testconfig = TestConfiguration.objects.get(
+                            owner=self.request.user, id=testconfig_id)
+                    except TestConfiguration.DoesNotExist as err:
+                        urlpath = path
+                    else:
+                        urlpath = self.get_urlpath(testconfig, path)
                     config = {
-                        'urlpath': path,
-                        'method': test_method,
-                        'responseCode': 200,
-                        'summary': data[test_method]['summary'],
+                        'urlpath': urlpath,
+                        'method': testmethod,
+                        'status_code': 200,
+                        'summary': data[testmethod]['summary'],
                     }
                     return config
         return None
 
-    def run_test(self, context):
-        config = context['config']
-        # Test if it runs
+    def run_test(self, config):
+        response = self.api.call(config['method'], config['urlpath'])
         try:
-            response = self.api.call(config['method'], config['urlpath'])
-            try:
-                data = response.json()
-            except json.decoder.JSONDecodeError as err:
-                data = response.text
-            result = json.dumps(
-                data, sort_keys=True, indent=2, separators=(',', ': '))
-            context.update({
-                'result': result,
-                'execution_time': response.execution_time,
-            })
-        except APIError as err:
-            context['messages'].append(err)
-            context['success'] = False
-            return context
+            text = response.json()
+        except json.decoder.JSONDecodeError as err:
+            text = response.text
+        text = json.dumps(
+            text, sort_keys=True, indent=2, separators=(',', ': '))
+        truncate_chars = settings.RUNTESTS_TRUNCATE_API_RESPONSE
+        if len(text) > truncate_chars:
+            text = text[:truncate_chars] + '\n...'
+        result = {
+            'text': text,
+            'execution_time': response.execution_time,
+            'status_code': response.status_code,
+        }
 
-        # Test if status code is as expected
-        if response.status_code != config['responseCode']:
-            context['messages'].append('Wrong status code ({} != {})!'.format(
-                config['responseCode'], response.status_code))
-            context['success'] = False
-            return context
-
-        # Test if response includes certain string
-        if 'responseHas' in config:
-            data = response.json()
-            if config['responseHas'] not in data:
-                context['messages'].append('"{}" not in "{}"!'.format(
-                    config['responseHas'], data))
-                context['success'] = False
-                return context
-        return context
+        return result
 
     def get_context_data(self, **kwargs):
         context = super(RunView, self).get_context_data(**kwargs)
         self.api = API(self.request.session.get('obp'))
+        config = self.get_config(**kwargs)
         context.update({
-            'config': self.get_config(kwargs['test']),
-            'result': None,
+            'config': config,
+            'text': None,
             'execution_time': -1,
             'messages': [],
-            'success': True,
+            'success': False,
         })
         if not context['config']:
             msg = 'Test {} is not configured!'.format(kwargs['test'])
             context['messages'].append(msg)
-            context['success'] = False
             return context
-        self.run_test(context)
+
+        try:
+            result = self.run_test(config)
+        except APIError as err:
+            context['messages'].append(err)
+            return context
+        else:
+            context.update(result)
+
+        # Test if status code is as expected
+        if result['status_code'] != config['status_code']:
+            msg = 'Status code is {}, but expected {}!'.format(
+                result['status_code'], config['status_code'])
+            context['messages'].append(msg)
+            return context
+
+        context['success'] = True
         return context
+
+
+class TestConfigurationCreateView(LoginRequiredMixin, CreateView):
+    model = TestConfiguration
+    form_class = TestConfigurationForm
+
+    def form_valid(self, form):
+        form.instance.owner = self.request.user
+        return super(TestConfigurationCreateView, self).form_valid(form)
+
+    def get_success_url(self):
+        return reverse('runtests-index-testconfig', kwargs={
+            'testconfig_id': self.object.id,
+        })
+
+
+class TestConfigurationUpdateView(LoginRequiredMixin, UpdateView):
+    model = TestConfiguration
+    form_class = TestConfigurationForm
+
+    def get_object(self, **kwargs):
+        object = super(TestConfigurationUpdateView, self).get_object(**kwargs)
+        if self.request.user != object.owner:
+            raise PermissionDenied
+        return object
+
+    def get_success_url(self):
+        return reverse('runtests-index-testconfig', kwargs={
+            'testconfig_id': self.object.id,
+        })
+
+
+class TestConfigurationDeleteView(LoginRequiredMixin, DeleteView):
+    model = TestConfiguration
+    form_class = TestConfigurationForm
+    success_url = reverse_lazy('runtests-index')
+
+    def get_object(self, **kwargs):
+        object = super(TestConfigurationDeleteView, self).get_object(**kwargs)
+        if self.request.user != object.owner:
+            raise PermissionDenied
+        return object

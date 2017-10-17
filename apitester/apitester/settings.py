@@ -188,6 +188,8 @@ API_SWAGGER_BASE_PATH = '/obp/v1.4.0'
 # Always save session
 SESSION_SAVE_EVERY_REQUEST = True
 
+# Restrict the amount of characters of the API response shown in test result
+RUNTESTS_TRUNCATE_API_RESPONSE = 500
 
 # Set OAuth client key/secret in apitester/local_settings.py
 OAUTH_CONSUMER_KEY = None

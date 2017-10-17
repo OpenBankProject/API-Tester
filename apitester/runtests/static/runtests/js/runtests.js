@@ -1,7 +1,11 @@
 $(function() {
 	function runTest(runner) {
-		var test = runner.data('test')
-		var url = URL_RUNTEST_BASE.replace('all', test);
+		var testpath = runner.data('testpath');
+        var configId = $('#select-config').val();
+		var url = URL_RUNTEST_BASE.
+            replace('testmethod', 'get'). // hardcode get for now
+            replace('testpath', encodeURIComponent(testpath)).
+            replace('0', configId);
 		$.get(url, function (data) {
 			if (data['success']) {
 				alertType = 'success';
@@ -14,7 +18,7 @@ $(function() {
 				}
 				msg += '</ul>';
 			}
-			var result = `<div class="alert alert-${alertType}">${data['config']['summary']}<br />${data['test']}<br />${msg}<br /><pre>${data['result']}</pre><br />Took ${data['execution_time']} ms</div>`;
+			var result = `<div class="alert alert-${alertType}">${data['config']['summary']}<br />${data['config']['urlpath']}<br />${msg}<br /><pre>${data['text']}</pre><br />Took ${data['execution_time']} ms</div>`;
 			$(runner.find('.result')).append(result);
 		});
 	}
@@ -42,4 +46,18 @@ $(function() {
 		$('.runner').find('input').prop('checked', true);
 	});
 
+    $('#select-config').change(function() {
+        var configId = $(this).val();
+        if (configId) {
+            $('.config').addClass('hide');
+            $('#config-' + configId).removeClass('hide');
+            $('#run-buttons').removeClass('hide');
+            $('#test-list').removeClass('hide');
+        }
+    })
+
+    var configId = location.href.substr(location.href.lastIndexOf('/') + 1);
+    if (configId) {
+        $('#select-config').val(configId).trigger('change');
+    }
 });
