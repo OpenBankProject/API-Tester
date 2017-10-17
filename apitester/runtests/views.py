@@ -70,8 +70,12 @@ class RunView(LoginRequiredMixin, TemplateView):
         # Test if it runs
         try:
             response = self.api.call(config['method'], config['urlpath'])
-            result = json.dumps(response.json(),
-                sort_keys=True, indent=2, separators=(',', ': '))
+            try:
+                data = response.json()
+            except json.decoder.JSONDecodeError as err:
+                data = response.text
+            result = json.dumps(
+                data, sort_keys=True, indent=2, separators=(',', ': '))
             context.update({
                 'result': result,
                 'execution_time': response.execution_time,
