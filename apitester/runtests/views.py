@@ -5,6 +5,7 @@ Views of runtests app
 
 import json
 
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
 from django.views.generic import TemplateView
@@ -19,22 +20,26 @@ class IndexView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)
         api = API(self.request.session.get('obp'))
-        swagger = api.get_swagger()
-        calls = []
-        for path, data in swagger['paths'].items():
-            # Only GET requests for now
-            if 'get' in data:
-                call = {
-                    'urlpath': path,
-                    'method': 'get',
-                    'summary': data['get']['summary'],
-                    'responseCode': 200,
-                }
-                calls.append(call)
+        try:
+            swagger = api.get_swagger()
+        except APIError as err:
+            messages.error(self.request, err)
+        else:
+            calls = []
+            for path, data in swagger['paths'].items():
+                # Only GET requests for now
+                if 'get' in data:
+                    call = {
+                        'urlpath': path,
+                        'method': 'get',
+                        'summary': data['get']['summary'],
+                        'responseCode': 200,
+                    }
+                    calls.append(call)
 
-        context.update({
-            'calls': calls,
-        })
+            context.update({
+                'calls': calls,
+            })
         return context
 
 
@@ -53,16 +58,20 @@ class RunView(LoginRequiredMixin, TemplateView):
 
     def get_config(self, test):
         test_method, test_path = test.split(' ')
-        swagger = self.api.get_swagger()
-        for path, data in swagger['paths'].items():
-            if test_path == path and test_method in data:
-                config = {
-                    'urlpath': path,
-                    'method': test_method,
-                    'responseCode': 200,
-                    'summary': data[test_method]['summary'],
-                }
-                return config
+        try:
+            swagger = self.api.get_swagger()
+        except APIError as err:
+            messages.error(self.request, err)
+        else:
+            for path, data in swagger['paths'].items():
+                if test_path == path and test_method in data:
+                    config = {
+                        'urlpath': path,
+                        'method': test_method,
+                        'responseCode': 200,
+                        'summary': data[test_method]['summary'],
+                    }
+                    return config
         return None
 
     def run_test(self, context):
