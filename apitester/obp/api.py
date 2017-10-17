@@ -42,6 +42,7 @@ class API(object):
         self.set_base_path()
         if session_data:
             self.start_session(session_data)
+        self.session_data = session_data
 
     def set_base_path(self, base_path=None):
         """Sets the basepath for API calls"""
@@ -148,11 +149,11 @@ class API(object):
 
     def get_swagger(self):
         """Gets the swagger definition from the API"""
-        if not self.swagger:
+        if not self.session_data.get('swagger'):
             self.set_base_path(settings.API_SWAGGER_BASE_PATH)
             urlpath = '/resource-docs/v3.0.0/swagger'
             response = self.get(urlpath)
             # Set base path back
             self.set_base_path()
-            self.swagger = response
-        return self.swagger
+            self.session_data['swagger'] = response
+        return self.session_data.get('swagger')
