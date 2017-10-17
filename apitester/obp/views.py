@@ -69,7 +69,7 @@ class OAuthInitiateView(RedirectView):
         else:
             self.request.session['obp'] = {
                 'authenticator': 'obp.oauth.OAuthAuthenticator',
-                'data': {
+                'authenticator_kwargs': {
                     'token': authenticator.token,
                     'secret': authenticator.secret,
                 }
@@ -81,16 +81,16 @@ class OAuthAuthorizeView(RedirectView, LoginToDjangoMixin):
     """View to authorize user after OAuth 1 initiation"""
 
     def get_redirect_url(self, *args, **kwargs):
-        obp = self.request.session.get('obp')
-        args = obp.get('data').values()
-        authenticator = OAuthAuthenticator(*args)
+        session_data = self.request.session.get('obp')
+        authenticator_kwargs = session_data.get('authenticator_kwargs')
+        authenticator = OAuthAuthenticator(**authenticator_kwargs)
         authorization_url = self.request.build_absolute_uri()
         try:
             authenticator.set_access_token(authorization_url)
         except AuthenticatorError as err:
             messages.error(self.request, err)
         else:
-            self.request.session['obp']['data'] = {
+            session_data['authenticator_kwargs'] = {
                 'token': authenticator.token,
                 'secret': authenticator.secret,
             }
@@ -117,7 +117,7 @@ class DirectLoginView(FormView, LoginToDjangoMixin):
         authenticator = form.cleaned_data['authenticator']
         self.request.session['obp'] = {
             'authenticator': 'obp.directlogin.DirectLoginAuthenticator',
-            'data': {
+            'authenticator_kwargs': {
                 'token': authenticator.token,
             }
         }
@@ -142,7 +142,7 @@ class GatewayLoginView(FormView, LoginToDjangoMixin):
         authenticator = form.cleaned_data['authenticator']
         self.request.session['obp'] = {
             'authenticator': 'obp.gatewaylogin.GatewayLoginAuthenticator',
-            'data': {
+            'authenticator_kwargs': {
                 'token': authenticator.token,
             }
         }

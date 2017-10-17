@@ -46,7 +46,6 @@ class OAuthAuthenticator(Authenticator):
         authorization_url = session.authorization_url(url)
         LOGGER.log(logging.INFO, 'Initial token {}, secret {}'.format(
             self.token, self.secret))
-        #time.sleep(5)  # Makes things more stable when talking to API (wtf?)
         return authorization_url
 
     def set_access_token(self, authorization_url):
@@ -67,7 +66,6 @@ class OAuthAuthenticator(Authenticator):
             self.secret = response.get('oauth_token_secret')
         LOGGER.log(logging.INFO, 'Updated token {}, secret {}'.format(
             self.token, self.secret))
-        #time.sleep(1)  # Makes things more stable when talking to API (wtf?)
 
     def get_session(self):
         session = OAuth1Session(

@@ -136,12 +136,12 @@ class API(object):
         - Token data
         for subsequent requests to the API
         """
-        if 'authenticator' in session_data and 'data' in session_data:
+        if 'authenticator' in session_data and\
+            'authenticator_kwargs' in session_data:
             mod_name, cls_name = session_data['authenticator'].rsplit('.', 1)
-            log(logging.INFO, 'Authenticator class {}'.format(cls_name))
+            log(logging.INFO, 'Authenticator {}'.format(cls_name))
             cls = getattr(importlib.import_module(mod_name), cls_name)
-            args = session_data['data'].values()
-            authenticator = cls(*args)
+            authenticator = cls(**session_data['authenticator_kwargs'])
             self.session = authenticator.get_session()
             return self.session
         else:
