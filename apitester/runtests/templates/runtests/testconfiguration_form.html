@@ -10,6 +10,7 @@
         {% csrf_token %}
         {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
         <div class="form-group">
+            {{ form.name.errors }}
              <label for="name">{{ form.name.label_tag }}</label>
             {{ form.name }}
         </div>
@@ -18,18 +19,21 @@
         <div class="row">
             <div class="col-xs-12 col-sm-4">
                 <div class="form-group">
+                    {{ form.bank_id.errors }}
                     <label for="bank_id">{{ form.bank_id.label_tag }}</label>
                     {{ form.bank_id }}
                 </div>
             </div>
             <div class="col-xs-12 col-sm-4">
                 <div class="form-group">
+                    {{ form.branch_id.errors }}
                     <label for="branch_id">{{ form.branch_id.label_tag }}</label>
                     {{ form.branch_id }}
                 </div>
             </div>
             <div class="col-xs-12 col-sm-4">
                 <div class="form-group">
+                    {{ form.atm_id.errors }}
                     <label for="atm_id">{{ form.atm_id.label_tag }}</label>
                     {{ form.atm_id }}
                 </div>
@@ -39,24 +43,28 @@
         <div class="row">
             <div class="col-xs-12 col-sm-6 col-md-3">
                 <div class="form-group">
+                    {{ form.username.errors }}
                     <label for="username">{{ form.username.label_tag }}</label>
                     {{ form.username }}
                 </div>
             </div>
             <div class="col-xs-12 col-sm-6 col-md-3">
                 <div class="form-group">
+                    {{ form.user_id.errors }}
                     <label for="user_id">{{ form.user_id.label_tag }}</label>
                     {{ form.user_id }}
                 </div>
             </div>
             <div class="col-xs-12 col-sm-6 col-md-3">
                 <div class="form-group">
+                    {{ form.customer_id.errors }}
                     <label for="customer_id">{{ form.customer_id.label_tag }}</label>
                     {{ form.customer_id }}
                 </div>
             </div>
             <div class="col-xs-12 col-sm-6 col-md-3">
                 <div class="form-group">
+                    {{ form.provider_id.errors }}
                     <label for="provider_id">{{ form.provider_id.label_tag }}</label>
                     {{ form.provider_id }}
                 </div>
@@ -67,24 +75,28 @@
         <div class="row">
             <div class="col-xs-12 col-sm-6 col-md-3">
                 <div class="form-group">
+                    {{ form.account_id.errors }}
                     <label for="account_id">{{ form.account_id.label_tag }}</label>
                     {{ form.account_id }}
                 </div>
             </div>
             <div class="col-xs-12 col-sm-6 col-md-3">
                 <div class="form-group">
+                    {{ form.view_id.errors }}
                     <label for="view_id">{{ form.view_id.label_tag }}</label>
                     {{ form.view_id }}
                 </div>
             </div>
             <div class="col-xs-12 col-sm-6 col-md-3">
                 <div class="form-group">
+                    {{ form.transaction_id.errors }}
                     <label for="transaction_id">{{ form.transaction_id.label_tag }}</label>
                     {{ form.transaction_id }}
                 </div>
             </div>
             <div class="col-xs-12 col-sm-6 col-md-3">
                 <div class="form-group">
+                    {{ form.other_account_id.errors }}
                     <label for="other_account_id">{{ form.other_account_id.label_tag }}</label>
                     {{ form.other_account_id }}
                 </div>
@@ -92,11 +104,13 @@
         </div>
 
         <div class="form-group">
+            {{ form.meeting_id.errors }}
             <label for="meeting_id">{{ form.meeting_id.label_tag }}</label>
             {{ form.meeting_id }}
         </div>
 
         <div class="form-group">
+            {{ form.product_code.errors }}
             <label for="product_code">{{ form.product_code.label_tag }}</label>
             {{ form.product_code }}
         </div>
@@ -104,12 +118,14 @@
         <div class="row">
             <div class="col-xs-12 col-sm-6">
                 <div class="form-group">
+                    {{ form.from_currency_code.errors }}
                     <label for="from_currency_code">{{ form.from_currency_code.label_tag }}</label>
                     {{ form.from_currency_code }}
                 </div>
             </div>
             <div class="col-xs-12 col-sm-6">
                 <div class="form-group">
+                    {{ form.to_currency_code.errors }}
                     <label for="to_currency_code">{{ form.to_currency_code.label_tag }}</label>
                     {{ form.to_currency_code }}
                 </div>
