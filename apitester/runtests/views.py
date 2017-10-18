@@ -32,6 +32,23 @@ class IndexView(LoginRequiredMixin, TemplateView):
     """Index view for runtests"""
     template_name = "runtests/index.html"
 
+    def get_testconfigs(self, **kwargs):
+        testconfigs = {
+            'available': [],
+            'selected': None,
+        }
+        testconfigs['available'] = TestConfiguration.objects.filter(
+            owner=self.request.user)
+        if 'testconfig_pk' in kwargs:
+            try:
+                testconfigs['selected'] = TestConfiguration.objects.get(
+                    owner=self.request.user,
+                    pk=kwargs['testconfig_pk'],
+                )
+            except TestConfiguration.DoesNotExist as err:
+                raise PermissionDenied
+        return testconfigs
+
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)
         api = API(self.request.session.get('obp'))
@@ -52,11 +69,9 @@ class IndexView(LoginRequiredMixin, TemplateView):
                     }
                     calls.append(call)
             calls = sorted(calls, key=lambda call: call['summary'])
-            testconfigs = TestConfiguration.objects.filter(
-                owner=self.request.user)
             context.update({
                 'calls': calls,
-                'testconfigs': testconfigs,
+                'testconfigs': self.get_testconfigs(**kwargs),
             })
         return context
 

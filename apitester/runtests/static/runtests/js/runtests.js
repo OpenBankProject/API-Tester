@@ -1,8 +1,8 @@
 $(function() {
 	function runTest(runner) {
 		var testpath = runner.data('testpath');
-        var configPk = $('#select-config').val();
-		var url = URL_RUNTEST_BASE.
+        var configPk = $('#select-testconfig').val();
+		var url = URL_RUNTESTS_RUN.
             replace('testmethod', 'get'). // hardcode get for now
             replace('testpath', encodeURIComponent(testpath)).
             replace('0', configPk);
@@ -46,18 +46,20 @@ $(function() {
 		$('.runner').find('input').prop('checked', true);
 	});
 
-    $('#select-config').change(function() {
+    $('#select-testconfig').change(function() {
         var configPk = $(this).val();
         if (configPk) {
-            $('.config').addClass('hide');
-            $('#config-' + configPk).removeClass('hide');
-            $('#run-buttons').removeClass('hide');
-            $('#test-list').removeClass('hide');
+            location.href = `${URL_RUNTESTS_INDEX}${configPk}`;
+        } else  {
+            location.href = URL_RUNTESTS_INDEX;
         }
     })
 
     var configPk = location.href.substr(location.href.lastIndexOf('/') + 1);
     if (configPk) {
-        $('#select-config').val(configPk).trigger('change');
+        $('#nothing-selected').addClass('hide');
+        $('#select-testconfig').val(configPk);
+        $('#run-buttons').removeClass('hide');
+        $('#test-list').removeClass('hide');
     }
 });

@@ -7,12 +7,12 @@
 <div id="runtests">
 	<h1>Run tests</h1>
 
-    <div id="configs" class="form-group">
+    <div id="testconfigs" class="form-group">
         <div class="row">
             <div class="col-xs-12 col-sm-10">
-                <select id="select-config" class="form-control">
+                <select id="select-testconfig" class="form-control">
                     <option value="">Select test configuration ...</option>
-                    {% for config in testconfigs %}
+                    {% for config in testconfigs.available %}
                     <option value="{{ config.pk  }}">{{ config.name }}</option>
                     {% endfor %}
                 </select>
@@ -22,8 +22,9 @@
             </div>
         </div>
 
-        {% for config in testconfigs %}
-        <div class="config hide" id="config-{{ config.pk }}">
+    {% if testconfigs.selected %}
+        {% with testconfigs.selected as config %}
+        <div class="testconfig" id="testconfig-{{ config.pk }}">
             <h2>{{ config.name }} <a href="{% url 'runtests-testconfig-update' pk=config.pk %}" class="btn btn-default">Edit</a> <a href="{% url 'runtests-testconfig-delete' pk=config.pk %}" class="btn btn-secondary">Delete</a></h2>
             <div class="well">
                 <div class="row">
@@ -89,8 +90,15 @@
                 </div>
             </div>
         </div>
-        {% endfor %}
+        {% endwith %}
+    {% endif %}
     </div>
+
+
+    <div class="well" id="nothing-selected">
+        No test configuration has been selected. Please select one from the above or create a new one.
+    </div>
+
 
 	<div class="hide" id="run-buttons">
 		<button class="btn btn-primary" id="run">Test selected</button> <button class="btn btn-secondary" id="checkNone" />Uncheck all</button> <button class="btn btn-secondary" id="checkAll" />Check all</button>
@@ -121,7 +129,8 @@
 {% block extrajs %}
 	<script type="text/javascript" src="{% static 'runtests/js/runtests.js' %}"></script>
 	<script type="text/javascript">
-		URL_RUNTEST_BASE = "{% url 'runtests-run' testmethod='testmethod' testpath='testpath' testconfig_pk='0' %}";
+		URL_RUNTESTS_RUN = "{% url 'runtests-run' testmethod='testmethod' testpath='testpath' testconfig_pk='0' %}";
+        URL_RUNTESTS_INDEX = "{% url 'runtests-index' %}";
 	</script>
 {% endblock extrajs %}
 
