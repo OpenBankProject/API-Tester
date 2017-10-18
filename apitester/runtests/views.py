@@ -93,7 +93,7 @@ class RunView(LoginRequiredMixin, TemplateView):
                 urlpath = self.api_replace(urlpath, match, value)
         return urlpath
 
-    def get_config(self, testmethod, testpath, testconfig_id):
+    def get_config(self, testmethod, testpath, testconfig_pk):
         """Gets test config from swagger and database"""
         try:
             swagger = self.api.get_swagger()
@@ -104,7 +104,7 @@ class RunView(LoginRequiredMixin, TemplateView):
                 if path == testpath and testmethod in data:
                     try:
                         testconfig = TestConfiguration.objects.get(
-                            owner=self.request.user, id=testconfig_id)
+                            owner=self.request.user, pk=testconfig_pk)
                     except TestConfiguration.DoesNotExist as err:
                         urlpath = path
                     else:
@@ -182,7 +182,7 @@ class TestConfigurationCreateView(LoginRequiredMixin, CreateView):
 
     def get_success_url(self):
         return reverse('runtests-index-testconfig', kwargs={
-            'testconfig_id': self.object.id,
+            'testconfig_pk': self.object.pk,
         })
 
 
@@ -198,7 +198,7 @@ class TestConfigurationUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_success_url(self):
         return reverse('runtests-index-testconfig', kwargs={
-            'testconfig_id': self.object.id,
+            'testconfig_pk': self.object.pk,
         })
 
 

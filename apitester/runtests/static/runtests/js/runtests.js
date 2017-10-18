@@ -1,11 +1,11 @@
 $(function() {
 	function runTest(runner) {
 		var testpath = runner.data('testpath');
-        var configId = $('#select-config').val();
+        var configPk = $('#select-config').val();
 		var url = URL_RUNTEST_BASE.
             replace('testmethod', 'get'). // hardcode get for now
             replace('testpath', encodeURIComponent(testpath)).
-            replace('0', configId);
+            replace('0', configPk);
 		$.get(url, function (data) {
 			if (data['success']) {
 				alertType = 'success';
@@ -47,17 +47,17 @@ $(function() {
 	});
 
     $('#select-config').change(function() {
-        var configId = $(this).val();
-        if (configId) {
+        var configPk = $(this).val();
+        if (configPk) {
             $('.config').addClass('hide');
-            $('#config-' + configId).removeClass('hide');
+            $('#config-' + configPk).removeClass('hide');
             $('#run-buttons').removeClass('hide');
             $('#test-list').removeClass('hide');
         }
     })
 
-    var configId = location.href.substr(location.href.lastIndexOf('/') + 1);
-    if (configId) {
-        $('#select-config').val(configId).trigger('change');
+    var configPk = location.href.substr(location.href.lastIndexOf('/') + 1);
+    if (configPk) {
+        $('#select-config').val(configPk).trigger('change');
     }
 });

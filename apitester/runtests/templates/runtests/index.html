@@ -13,7 +13,7 @@
                 <select id="select-config" class="form-control">
                     <option value="">Select test configuration ...</option>
                     {% for config in testconfigs %}
-                    <option value="{{ config.id }}">{{ config.name }}</option>
+                    <option value="{{ config.pk  }}">{{ config.name }}</option>
                     {% endfor %}
                 </select>
             </div>
@@ -23,8 +23,8 @@
         </div>
 
         {% for config in testconfigs %}
-        <div class="config hide" id="config-{{ config.id }}">
-            <h2>{{ config.name }} <a href="{% url 'runtests-testconfig-update' pk=config.id %}" class="btn btn-default">Edit</a> <a href="{% url 'runtests-testconfig-delete' pk=config.id %}" class="btn btn-secondary">Delete</a></h2>
+        <div class="config hide" id="config-{{ config.pk }}">
+            <h2>{{ config.name }} <a href="{% url 'runtests-testconfig-update' pk=config.pk %}" class="btn btn-default">Edit</a> <a href="{% url 'runtests-testconfig-delete' pk=config.pk %}" class="btn btn-secondary">Delete</a></h2>
             <div class="well">
                 <div class="row">
                     <div class="col-xs-12 col-sm-4">
@@ -121,7 +121,7 @@
 {% block extrajs %}
 	<script type="text/javascript" src="{% static 'runtests/js/runtests.js' %}"></script>
 	<script type="text/javascript">
-		URL_RUNTEST_BASE = "{% url 'runtests-run' testmethod='testmethod' testpath='testpath' testconfig_id='0' %}";
+		URL_RUNTEST_BASE = "{% url 'runtests-run' testmethod='testmethod' testpath='testpath' testconfig_pk='0' %}";
 	</script>
 {% endblock extrajs %}
 
