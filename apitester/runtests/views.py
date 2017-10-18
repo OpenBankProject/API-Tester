@@ -110,6 +110,13 @@ class RunView(LoginRequiredMixin, TemplateView):
 
     def get_config(self, testmethod, testpath, testconfig_pk):
         """Gets test config from swagger and database"""
+        config = {
+            'urlpath': testpath,
+            'method': testmethod,
+            'status_code': 200,
+            'summary': 'Unknown',
+            'found': False,
+        }
         try:
             swagger = self.api.get_swagger()
         except APIError as err:
@@ -117,21 +124,18 @@ class RunView(LoginRequiredMixin, TemplateView):
         else:
             for path, data in swagger['paths'].items():
                 if path == testpath and testmethod in data:
+                    config.update({
+                        'found': True,
+                        'summary': data[testmethod]['summary'],
+                    })
                     try:
                         testconfig = TestConfiguration.objects.get(
                             owner=self.request.user, pk=testconfig_pk)
                     except TestConfiguration.DoesNotExist as err:
-                        urlpath = path
+                        pass
                     else:
-                        urlpath = self.get_urlpath(testconfig, path)
-                    config = {
-                        'urlpath': urlpath,
-                        'method': testmethod,
-                        'status_code': 200,
-                        'summary': data[testmethod]['summary'],
-                    }
-                    return config
-        return None
+                        config['urlpath'] = self.get_urlpath(testconfig, path)
+        return config
 
     def run_test(self, config):
         response = self.api.call(config['method'], config['urlpath'])
@@ -163,8 +167,8 @@ class RunView(LoginRequiredMixin, TemplateView):
             'messages': [],
             'success': False,
         })
-        if not context['config']:
-            msg = 'Test {} is not configured!'.format(kwargs['test'])
+        if not config['found']:
+            msg = 'Unknown path {}!'.format(kwargs['testpath'])
             context['messages'].append(msg)
             return context
 

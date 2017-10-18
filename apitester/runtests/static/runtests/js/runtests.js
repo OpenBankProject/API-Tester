@@ -7,11 +7,10 @@ $(function() {
             replace('testpath', encodeURIComponent(testpath)).
             replace('0', configPk);
 		$.get(url, function (data) {
-			if (data['success']) {
-				alertType = 'success';
-				msg = '';
-			} else {
-				alertType = 'danger';
+            var alertType = 'success';
+            var msg = '';
+			if (!data['success']) {
+                alertType = 'danger';
 				msg = '<ul>';
 				for (var i=0; i < data['messages'].length; i++) {
 					msg += `<li>${data['messages'][i]}</li>`;
