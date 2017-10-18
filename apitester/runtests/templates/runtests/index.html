@@ -141,7 +141,6 @@
 {% block extrajs %}
 	<script type="text/javascript" src="{% static 'runtests/js/runtests.js' %}"></script>
 	<script type="text/javascript">
-		URL_RUNTESTS_RUN = "{% url 'runtests-run' testmethod='testmethod' testpath='testpath' testconfig_pk='0' %}";
         URL_RUNTESTS_INDEX = "{% url 'runtests-index' %}";
 	</script>
 {% endblock extrajs %}
