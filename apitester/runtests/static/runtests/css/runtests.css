@@ -4,6 +4,9 @@
 #runtests #testconfigs {
     margin-bottom: 50px;
 }
+#runtests .testconfig .row {
+    margin: 5px 0;
+}
 #runtests #test-list {
 	list-style-type: none;
 	padding: 0;
