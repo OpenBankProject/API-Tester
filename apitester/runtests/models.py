@@ -127,6 +127,13 @@ class TestConfiguration(models.Model):
         blank=True,
         null=True,
     )
+    consumer_id = models.CharField(
+        max_length=255,
+        verbose_name='Consumer Id',
+        help_text='Consumer identifier of a registered app',
+        blank=True,
+        null=True,
+    )
 
     class Meta:
         verbose_name = 'Test Configuration'
