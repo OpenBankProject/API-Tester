@@ -1,12 +1,7 @@
 $(function() {
 	function runTest(runner) {
 		var testpath = runner.data('testpath');
-        var configPk = $('#select-testconfig').val();
-		var url = URL_RUNTESTS_RUN.
-            replace('testmethod', 'get'). // hardcode get for now
-            replace('testpath', encodeURIComponent(testpath)).
-            replace('0', configPk);
-		$.get(url, function (data) {
+		$.get(testpath, function (data) {
             var alertType = 'success';
             var msg = '';
 			if (!data['success']) {

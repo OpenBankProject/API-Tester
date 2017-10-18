@@ -4,6 +4,7 @@ Views of runtests app
 """
 
 import json
+import urllib
 
 from django.conf import settings
 from django.contrib import messages
@@ -72,6 +73,7 @@ class IndexView(LoginRequiredMixin, TemplateView):
             context.update({
                 'calls': calls,
                 'testconfigs': self.get_testconfigs(**kwargs),
+                'testconfig_pk': kwargs.get('testconfig_pk', 0),
             })
         return context
 
@@ -110,8 +112,9 @@ class RunView(LoginRequiredMixin, TemplateView):
 
     def get_config(self, testmethod, testpath, testconfig_pk):
         """Gets test config from swagger and database"""
+        urlpath = urllib.parse.unquote(testpath)
         config = {
-            'urlpath': testpath,
+            'urlpath': urlpath,
             'method': testmethod,
             'status_code': 200,
             'summary': 'Unknown',
@@ -123,7 +126,7 @@ class RunView(LoginRequiredMixin, TemplateView):
             messages.error(self.request, err)
         else:
             for path, data in swagger['paths'].items():
-                if path == testpath and testmethod in data:
+                if path == urlpath and testmethod in data:
                     config.update({
                         'found': True,
                         'summary': data[testmethod]['summary'],

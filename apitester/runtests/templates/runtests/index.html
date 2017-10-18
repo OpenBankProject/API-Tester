@@ -106,7 +106,7 @@
 
     <ul class="hide" id="test-list">
 		{% for call in calls %}
-		<li class="runner" data-testpath="{{ call.urlpath }}">
+		<li class="runner" data-testpath="{% url 'runtests-run' testmethod=call.method testpath=call.urlpath|urlencode testconfig_pk=testconfig_pk %}">
 			<div class="row">
 				<div class="col-xs-2">
 					<div class="checkbox">
