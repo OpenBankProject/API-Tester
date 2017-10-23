@@ -60,13 +60,12 @@ class IndexView(LoginRequiredMixin, TemplateView):
         else:
             calls = []
             for path, data in swagger['paths'].items():
-                # Only GET requests for now
-                if 'get' in data:
+                for method in data:
                     call = {
                         'urlpath': path,
-                        'method': 'get',
-                        'summary': data['get']['summary'],
-                        'responseCode': 200,
+                        'method': method,
+                        'summary': data[method]['summary'],
+                        'responseCode': 200,  # TODO: other response codes
                     }
                     calls.append(call)
             calls = sorted(calls, key=lambda call: call['summary'])
@@ -110,6 +109,13 @@ class RunView(LoginRequiredMixin, TemplateView):
                 urlpath = self.api_replace(urlpath, match, value)
         return urlpath
 
+    def get_payload(self, testconfig, parameters):
+        payload = {}
+        for parameter in parameters:
+            name = parameter['name']
+            payload[name] = getattr(testconfig, name, '')
+        return payload
+
     def get_config(self, testmethod, testpath, testconfig_pk):
         """Gets test config from swagger and database"""
         urlpath = urllib.parse.unquote(testpath)
@@ -118,6 +124,7 @@ class RunView(LoginRequiredMixin, TemplateView):
             'method': testmethod,
             'status_code': 200,
             'summary': 'Unknown',
+            'payload': None,
             'found': False,
         }
         try:
@@ -125,11 +132,12 @@ class RunView(LoginRequiredMixin, TemplateView):
         except APIError as err:
             messages.error(self.request, err)
         else:
-            for path, data in swagger['paths'].items():
-                if path == urlpath and testmethod in data:
+            for call_path, call_data in swagger['paths'].items():
+                if call_path == urlpath and testmethod in call_data:
+                    call_data = call_data[testmethod]
                     config.update({
                         'found': True,
-                        'summary': data[testmethod]['summary'],
+                        'summary': call_data['summary'],
                     })
                     try:
                         testconfig = TestConfiguration.objects.get(
@@ -137,11 +145,16 @@ class RunView(LoginRequiredMixin, TemplateView):
                     except TestConfiguration.DoesNotExist as err:
                         pass
                     else:
-                        config['urlpath'] = self.get_urlpath(testconfig, path)
+                        config['urlpath'] = self.get_urlpath(
+                            testconfig, call_path)
+                        if testmethod in ['post', 'put']:
+                            config['payload'] = self.get_payload(
+                                testconfig, call_data['parameters'])
         return config
 
     def run_test(self, config):
-        response = self.api.call(config['method'], config['urlpath'])
+        response = self.api.call(
+            config['method'], config['urlpath'], config['payload'])
         try:
             text = response.json()
         except json.decoder.JSONDecodeError as err:
