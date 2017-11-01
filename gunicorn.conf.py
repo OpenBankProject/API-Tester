@@ -4,7 +4,7 @@ import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-bind = '127.0.0.1:8000'
+bind = '127.0.0.1:8001'
 accesslog = os.path.join(BASE_DIR, 'logs', 'gunicorn.access.log')
 errorlog = os.path.join(BASE_DIR, 'logs', 'gunicorn.error.log')
 loglevel = 'info'
