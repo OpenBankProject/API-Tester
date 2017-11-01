@@ -37,9 +37,24 @@ apitester/
 ## Install dependencies
 
 ```bash
-$ virtualenv --python=python3 ../venv
+$ /usr/bin/virtualenv --python=python3 ../venv
 $ source ../venv/bin/activate
 (venv)$ pip install -r requirements.txt
+```
+
+
+## Configure database
+
+The application's authentication is API-driven. However, to make use of Django's authentication framework, sessions and to store test configurations, the system requires a database. Here is an example for PostgreSQL:
+
+```bash
+$ /usr/bin/sudo -iu postgres
+$ psql
+# CREATE DATABASE apitester;
+# CREATE USER apitester WITH PASSWORD '<pw>';
+# GRANT ALL PRIVILEGES ON DATABASE apitester TO apitester;
+\q
+exit
 ```
 
 
@@ -62,16 +77,14 @@ OAUTH_CONSUMER_SECRET = '<secret>'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'dbname',
-        'USER': 'dbuser',
-        'PASSWORD': 'dbpassword',
+        'NAME': 'apitester',
+        'USER': 'apitester',
+        'PASSWORD': '<pw>',
         'HOST': 'localhost',
         'PORT': '',
     }
 }
 ```
-
-The application's authentication is API-driven. However, to make use of Django's authentication framework and sessions, there is a minimal requirement of a database.
 
 
 ## Initialise database
