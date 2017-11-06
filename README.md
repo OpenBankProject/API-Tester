@@ -2,6 +2,8 @@
 
 This is a Django project to test the Open Bank Project API from the outside.
 
+It currently supports three authentication methods: OAuth1.0a, Gateway Login and Direct Login
+
 
 
 # Installation (development)
