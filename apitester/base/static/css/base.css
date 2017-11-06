@@ -125,3 +125,6 @@ div.filter {
 .authentication-method {
 	display: none;
 }
+.authentication-method h3 {
+	margin-top: 0;
+}
