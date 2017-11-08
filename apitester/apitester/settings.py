@@ -181,8 +181,6 @@ GATEWAYLOGIN_HAS_CBS = False
 API_HOST = 'http://127.0.0.1:8080'
 API_BASE_PATH = '/obp/v'
 API_VERSION = '3.0.0'
-# For some reason, swagger is not available at the latest API version
-API_URL_SWAGGER = API_HOST + '/obp/v1.4.0/resource-docs/v' + API_VERSION + '/swagger'  # noqa
 
 
 # Always save session
@@ -206,6 +204,7 @@ if not OAUTH_CONSUMER_KEY:
 if not OAUTH_CONSUMER_SECRET:
     raise ImproperlyConfigured('Missing settings for OAUTH_CONSUMER_SECRET')
 
-# API_ROOT defined here in case any of the three components has been
-# overwritten by local settings
+# Settings here might use parts overwritten in local settings
 API_ROOT = API_HOST + API_BASE_PATH + API_VERSION
+# For some reason, swagger is not available at the latest API version
+API_URL_SWAGGER = API_HOST + '/obp/v1.4.0/resource-docs/v' + API_VERSION + '/swagger'  # noqa
