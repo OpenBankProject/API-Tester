@@ -7,116 +7,121 @@
 <div id="runtests">
 	<h1>Run tests</h1>
 
-    <div id="testconfigs" class="form-group">
-        <div class="row">
-            <div class="col-xs-12 col-sm-10">
-                <select id="select-testconfig" class="form-control">
-                    <option value="">Select test configuration ...</option>
-                    {% for config in testconfigs.available %}
-                    <option value="{{ config.pk  }}">{{ config.name }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="col-xs-12 col-sm-2">
-                <a href="{% url 'runtests-testconfig-add' %}" class="btn btn-success form-control">Create new</a>
-            </div>
-        </div>
+	<div id="testconfigs" class="form-group">
+		<div class="row">
+			<div class="col-xs-12 col-sm-10">
+				<select id="select-testconfig" class="form-control">
+					<option value="">Select test configuration ...</option>
+					{% for config in testconfigs.available %}
+					<option value="{{ config.pk  }}">{{ config.name }}</option>
+					{% endfor %}
+				</select>
+			</div>
+			<div class="col-xs-12 col-sm-2">
+				<a href="{% url 'runtests-testconfig-add' %}" class="btn btn-success form-control">Create new</a>
+			</div>
+		</div>
 
-    {% if testconfigs.selected %}
-        {% with testconfigs.selected as config %}
-        <div class="testconfig" id="testconfig-{{ config.pk }}">
-            <h2>{{ config.name }} <a href="{% url 'runtests-testconfig-update' pk=config.pk %}" class="btn btn-default">Edit</a> <a href="{% url 'runtests-testconfig-delete' pk=config.pk %}" class="btn btn-secondary">Delete</a></h2>
-            <div class="well">
-                <div class="row">
-                    <div class="col-xs-12 col-sm-4">
-                        <span class="text-muted">{% get_verbose_field_name config "bank_id" %}</span><br /><code>{{ config.bank_id }}</code>
-                    </div>
-                    <div class="col-xs-12 col-sm-4">
-                        <span class="text-muted">{% get_verbose_field_name config "branch_id" %}</span><br /><code>{{ config.branch_id }}</code>
-                    </div>
-                    <div class="col-xs-12 col-sm-4">
-                        <span class="text-muted">{% get_verbose_field_name config "atm_id" %}</span><br /><code>{{ config.atm_id }}</code>
-                    </div>
-                </div>
+	{% if testconfigs.selected %}
+		{% with testconfigs.selected as config %}
+		<div class="testconfig" id="testconfig-{{ config.pk }}">
+			<h2>{{ config.name }} <a href="{% url 'runtests-testconfig-update' pk=config.pk %}" class="btn btn-default">Edit</a> <a href="{% url 'runtests-testconfig-delete' pk=config.pk %}" class="btn btn-secondary">Delete</a></h2>
+			<div class="well">
+				<div class="row">
+					<div class="col-xs-12">
+						<span class="text-muted">{% get_verbose_field_name config "api_version" %}</span><br /><code>{{ config.api_version }}</code>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-12 col-sm-4">
+						<span class="text-muted">{% get_verbose_field_name config "bank_id" %}</span><br /><code>{{ config.bank_id }}</code>
+					</div>
+					<div class="col-xs-12 col-sm-4">
+						<span class="text-muted">{% get_verbose_field_name config "branch_id" %}</span><br /><code>{{ config.branch_id }}</code>
+					</div>
+					<div class="col-xs-12 col-sm-4">
+						<span class="text-muted">{% get_verbose_field_name config "atm_id" %}</span><br /><code>{{ config.atm_id }}</code>
+					</div>
+				</div>
 
-                <div class="row">
-                    <div class="col-xs-12 col-sm-4">
-                        <span class="text-muted">{% get_verbose_field_name config "username" %}</span><br /><code>{{ config.username}}</code>
-                    </div>
-                    <div class="col-xs-12 col-sm-4">
-                        <span class="text-muted">{% get_verbose_field_name config "user_id" %}</span><br /><code>{{ config.user_id }}</code>
-                    </div>
-                    <div class="col-xs-12 col-sm-4">
-                        <span class="text-muted">{% get_verbose_field_name config "customer_id" %}</span><br /><code>{{ config.customer_id }}</code>
-                    </div>
+				<div class="row">
+					<div class="col-xs-12 col-sm-4">
+						<span class="text-muted">{% get_verbose_field_name config "username" %}</span><br /><code>{{ config.username}}</code>
+					</div>
+					<div class="col-xs-12 col-sm-4">
+						<span class="text-muted">{% get_verbose_field_name config "user_id" %}</span><br /><code>{{ config.user_id }}</code>
+					</div>
+					<div class="col-xs-12 col-sm-4">
+						<span class="text-muted">{% get_verbose_field_name config "customer_id" %}</span><br /><code>{{ config.customer_id }}</code>
+					</div>
 
-                </div>
+				</div>
 
-                <div class="row">
-                    <div class="col-xs-12 col-sm-4">
-                        <span class="text-muted">{% get_verbose_field_name config "provider_id" %}</span><br /><code>{{ config.provider_id }}</code>
-                    </div>
-                    <div class="col-xs-12 col-sm-4">
-                        <span class="text-muted">{% get_verbose_field_name config "account_id" %}</span><br /><code>{{ config.account_id }}</code>
-                    </div>
-                    <div class="col-xs-12 col-sm-4">
-                        <span class="text-muted">{% get_verbose_field_name config "view_id" %}</span><br /><code>{{ config.view_id }}</code>
-                    </div>
+				<div class="row">
+					<div class="col-xs-12 col-sm-4">
+						<span class="text-muted">{% get_verbose_field_name config "provider_id" %}</span><br /><code>{{ config.provider_id }}</code>
+					</div>
+					<div class="col-xs-12 col-sm-4">
+						<span class="text-muted">{% get_verbose_field_name config "account_id" %}</span><br /><code>{{ config.account_id }}</code>
+					</div>
+					<div class="col-xs-12 col-sm-4">
+						<span class="text-muted">{% get_verbose_field_name config "view_id" %}</span><br /><code>{{ config.view_id }}</code>
+					</div>
 
-                </div>
+				</div>
 
-                <div class="row">
-                    <div class="col-xs-12 col-sm-4">
-                        <span class="text-muted">{% get_verbose_field_name config "transaction_id" %}</span><br /><code>{{ config.transaction_id }}</code>
-                    </div>
-                    <div class="col-xs-12 col-sm-4">
-                        <span class="text-muted">{% get_verbose_field_name config "other_account_id" %}</span><br /><code>{{ config.other_account_id }}</code>
-                    </div>
-                    <div class="col-xs-12 col-sm-4">
-                        <span class="text-muted">{% get_verbose_field_name config "meeting_id" %}</span><br /><code>{{ config.meeting_id }}</code>
-                    </div>
-                </div>
+				<div class="row">
+					<div class="col-xs-12 col-sm-4">
+						<span class="text-muted">{% get_verbose_field_name config "transaction_id" %}</span><br /><code>{{ config.transaction_id }}</code>
+					</div>
+					<div class="col-xs-12 col-sm-4">
+						<span class="text-muted">{% get_verbose_field_name config "other_account_id" %}</span><br /><code>{{ config.other_account_id }}</code>
+					</div>
+					<div class="col-xs-12 col-sm-4">
+						<span class="text-muted">{% get_verbose_field_name config "meeting_id" %}</span><br /><code>{{ config.meeting_id }}</code>
+					</div>
+				</div>
 
-                <div class="row">
-                    <div class="col-xs-12 col-sm-4">
-                        <span class="text-muted">{% get_verbose_field_name config "product_code" %}</span><br /><code>{{ config.product_code }}</code>
-                    </div>
-                    <div class="col-xs-12 col-sm-4">
-                        <span class="text-muted">{% get_verbose_field_name config "from_currency_code" %}</span><br /><code>{{ config.from_currency_code }}</code>
-                    </div>
-                    <div class="col-xs-12 col-sm-4">
-                        <span class="text-muted">{% get_verbose_field_name config "to_currency_code" %}</span><br /><code>{{ config.to_currency_code }}</code>
-                    </div>
-                </div>
+				<div class="row">
+					<div class="col-xs-12 col-sm-4">
+						<span class="text-muted">{% get_verbose_field_name config "product_code" %}</span><br /><code>{{ config.product_code }}</code>
+					</div>
+					<div class="col-xs-12 col-sm-4">
+						<span class="text-muted">{% get_verbose_field_name config "from_currency_code" %}</span><br /><code>{{ config.from_currency_code }}</code>
+					</div>
+					<div class="col-xs-12 col-sm-4">
+						<span class="text-muted">{% get_verbose_field_name config "to_currency_code" %}</span><br /><code>{{ config.to_currency_code }}</code>
+					</div>
+				</div>
 
-                <div class="row">
-                    <div class="col-xs-12 col-sm-4">
-                        <span class="text-muted">{% get_verbose_field_name config "consumer_id" %}</span><br /><code>{{ config.consumer_id }}</code>
-                    </div>
-                    <div class="col-xs-12 col-sm-4">
+				<div class="row">
+					<div class="col-xs-12 col-sm-4">
+						<span class="text-muted">{% get_verbose_field_name config "consumer_id" %}</span><br /><code>{{ config.consumer_id }}</code>
+					</div>
+					<div class="col-xs-12 col-sm-4">
 
-                    </div>
-                    <div class="col-xs-12 col-sm-4">
+					</div>
+					<div class="col-xs-12 col-sm-4">
 
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% endwith %}
-    {% endif %}
-    </div>
+					</div>
+				</div>
+			</div>
+		</div>
+		{% endwith %}
+	{% endif %}
+	</div>
 
 
-    <div class="well" id="nothing-selected">
-        No test configuration has been selected. Please select one from the above or create a new one.
-    </div>
+	<div class="well" id="nothing-selected">
+		No test configuration has been selected. Please select one from the above or create a new one.
+	</div>
 
 
 	<div class="hide" id="run-buttons">
 		<button class="btn btn-primary" id="run">Test selected</button> <button class="btn btn-secondary" id="checkNone" />Uncheck all</button> <button class="btn btn-secondary" id="checkAll" />Check all</button>
 	</div>
 
-    <ul class="hide" id="test-list">
+	<ul class="hide" id="test-list">
 		{% for call in calls %}
 		<li class="runner" data-testpath="{% url 'runtests-run' testmethod=call.method testpath=call.urlpath|urlencode testconfig_pk=testconfig_pk %}">
 			<div class="row">
@@ -141,7 +146,7 @@
 {% block extrajs %}
 	<script type="text/javascript" src="{% static 'runtests/js/runtests.js' %}"></script>
 	<script type="text/javascript">
-        URL_RUNTESTS_INDEX = "{% url 'runtests-index' %}";
+		URL_RUNTESTS_INDEX = "{% url 'runtests-index' %}";
 	</script>
 {% endblock extrajs %}
 

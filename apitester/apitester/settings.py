@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
 import os
-from collections import OrderedDict
 
 from django.core.exceptions import ImproperlyConfigured
 from django.urls import reverse_lazy
@@ -101,16 +100,16 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',  # noqa
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',  # noqa
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',  # noqa
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',  # noqa
     },
 ]
 
@@ -180,9 +179,11 @@ DIRECTLOGIN_PATH = '/my/logins/direct'
 GATEWAYLOGIN_HAS_CBS = False
 
 API_HOST = 'http://127.0.0.1:8080'
-API_BASE_PATH = '/obp/v3.0.0'
+API_BASE_PATH = '/obp/v'
+API_VERSION = '3.0.0'
+API_ROOT = API_HOST + API_BASE_PATH + API_VERSION
 # For some reason, swagger is not available at the latest API version
-API_SWAGGER_BASE_PATH = '/obp/v1.4.0'
+API_URL_SWAGGER = API_HOST + '/obp/v1.4.0/resource-docs/v' + API_VERSION + '/swagger'  # noqa
 
 
 # Always save session
@@ -197,7 +198,7 @@ OAUTH_CONSUMER_SECRET = None
 
 # Local settings can override anything in here
 try:
-    from apitester.local_settings import *
+    from apitester.local_settings import *  # noqa
 except ImportError:
     pass
 

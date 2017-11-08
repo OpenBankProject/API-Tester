@@ -108,6 +108,8 @@ class RunView(LoginRequiredMixin, TemplateView):
             value = getattr(testconfig, match.lower())
             if value:
                 urlpath = self.api_replace(urlpath, match, value)
+        urlpath = '{}{}{}'.format(
+            settings.API_BASE_PATH, testconfig.api_version, urlpath)
         return urlpath
 
     def get_config(self, testmethod, testpath, testconfig_pk):
@@ -137,11 +139,16 @@ class RunView(LoginRequiredMixin, TemplateView):
                     except TestConfiguration.DoesNotExist as err:
                         pass
                     else:
-                        config['urlpath'] = self.get_urlpath(testconfig, path)
+                        config.update({
+                            'urlpath': self.get_urlpath(testconfig, path),
+                        })
         return config
 
     def run_test(self, config):
-        response = self.api.call(config['method'], config['urlpath'])
+        """Runs a test with given config"""
+        url = '{}{}'.format(settings.API_HOST, config['urlpath'])
+        # Let APIError bubble up
+        response = self.api.call(config['method'], url)
         try:
             text = response.json()
         except json.decoder.JSONDecodeError as err:
@@ -156,7 +163,6 @@ class RunView(LoginRequiredMixin, TemplateView):
             'execution_time': response.execution_time,
             'status_code': response.status_code,
         }
-
         return result
 
     def get_context_data(self, **kwargs):

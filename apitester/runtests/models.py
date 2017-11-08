@@ -15,6 +15,13 @@ class TestConfiguration(models.Model):
         blank=False,
         null=False,
     )
+    api_version = models.CharField(
+        max_length=255,
+        verbose_name='API Version',
+        help_text='Version of the API to test, e.g. 3.0.0',
+        blank=False,
+        null=False,
+    )
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         verbose_name='Owner',
