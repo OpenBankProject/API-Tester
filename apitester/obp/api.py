@@ -162,6 +162,9 @@ class API(object):
         """Gets the swagger definition from the API"""
         # Poor man's caching ...
         if not self.session_data.get('swagger'):
-            response = self.call('GET', settings.API_URL_SWAGGER)
-            self.session_data['swagger'] = self.handle_response(response)
+            # API throws 500 if authenticated via GatewayLogin ...
+            #response = self.call('GET', settings.API_URL_SWAGGER)
+            response = requests.get(settings.API_URL_SWAGGER)
+            swagger = self.handle_response(response)
+            self.session_data['swagger'] = swagger
         return self.session_data.get('swagger')
