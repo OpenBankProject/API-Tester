@@ -1,11 +1,20 @@
 #runtests form {
-    margin-bottom: 10px;
+	margin-bottom: 10px;
 }
 #runtests #testconfigs {
-    margin-bottom: 50px;
+	margin-bottom: 50px;
+}
+#runtests #testconfigs select {
+	margin-bottom: 5px;
+}
+#runtests .testconfig .btn {
+	margin-bottom: 5px;
 }
 #runtests .testconfig .row {
-    margin: 5px 0;
+	margin: 5px 0;
+}
+#runtests #run-buttons button {
+	margin-bottom: 5px;
 }
 #runtests #test-list {
 	list-style-type: none;
@@ -21,6 +30,9 @@
 }
 #runtests .runner .checkbox {
 	margin: 0;
+}
+#runtests .runner button {
+	margin-bottom: 5px;
 }
 #runtests .result .alert {
 	margin: 0;
