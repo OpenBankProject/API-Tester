@@ -6,6 +6,7 @@ Template tags of runtests app
 from django import template
 register = template.Library()
 
+
 @register.simple_tag
 def get_verbose_field_name(instance, field_name):
     """
