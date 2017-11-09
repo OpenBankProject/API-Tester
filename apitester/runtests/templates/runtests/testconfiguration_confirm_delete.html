@@ -10,7 +10,7 @@
         {% csrf_token %}
         <div class="well">Are you sure you want to delete "{{ object.name }}" ?</div>
         <input type="submit" value="Delete" class="btn btn-danger" />
-        <a href="{% url 'runtests-index' %}" class="btn btn-secondary">No</a>
+        <a href="{% url 'runtests-index-testconfig' testconfig_pk=object.pk %}" class="btn btn-secondary">No</a>
     </form>
 </div>
 {% endblock content %}
