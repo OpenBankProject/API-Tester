@@ -39,7 +39,7 @@ class IndexView(LoginRequiredMixin, TemplateView):
             'selected': None,
         }
         testconfigs['available'] = TestConfiguration.objects.filter(
-            owner=self.request.user)
+            owner=self.request.user).order_by('name')
         if testconfig_pk:
             try:
                 testconfigs['selected'] = TestConfiguration.objects.get(
