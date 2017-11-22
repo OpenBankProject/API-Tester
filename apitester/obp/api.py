@@ -15,6 +15,7 @@ import requests
 from requests.exceptions import ConnectionError
 
 from django.conf import settings
+from django.core.cache import cache
 
 
 DATE_FORMAT = '%d/%b/%Y %H:%M:%S'
@@ -158,13 +159,14 @@ class API(object):
         else:
             return None
 
-    def get_swagger(self):
-        """Gets the swagger definition from the API"""
-        # Poor man's caching ...
-        if not self.session_data.get('swagger'):
-            # API throws 500 if authenticated via GatewayLogin ...
-            # response = self.call('GET', settings.API_URL_SWAGGER)
-            response = requests.get(settings.API_URL_SWAGGER)
-            swagger = self.handle_response(response)
-            self.session_data['swagger'] = swagger
-        return self.session_data.get('swagger')
+    def get_swagger(self, api_version='3.0.0'):
+        """
+        Gets the swagger definition from the API
+        Uses API version 3.0.0 per default, but can be overridden by e.g.
+        testconfig
+        """
+        urlpath = '/resource-docs/v{}/swagger'.format(api_version)
+        if not cache.get(urlpath):
+            swagger = self.get(urlpath)
+            cache.set(urlpath, swagger, settings.CACHE_TIMEOUT)
+        return cache.get(urlpath)

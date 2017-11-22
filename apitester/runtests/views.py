@@ -33,18 +33,18 @@ class IndexView(LoginRequiredMixin, TemplateView):
     """Index view for runtests"""
     template_name = "runtests/index.html"
 
-    def get_testconfigs(self, **kwargs):
+    def get_testconfigs(self, testconfig_pk):
         testconfigs = {
             'available': [],
             'selected': None,
         }
         testconfigs['available'] = TestConfiguration.objects.filter(
             owner=self.request.user)
-        if 'testconfig_pk' in kwargs:
+        if testconfig_pk:
             try:
                 testconfigs['selected'] = TestConfiguration.objects.get(
                     owner=self.request.user,
-                    pk=kwargs['testconfig_pk'],
+                    pk=testconfig_pk,
                 )
             except TestConfiguration.DoesNotExist as err:
                 raise PermissionDenied
@@ -52,29 +52,33 @@ class IndexView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)
+        calls = []
+        testconfig_pk = kwargs.get('testconfig_pk', 0)
+        testconfigs = self.get_testconfigs(testconfig_pk)
         api = API(self.request.session.get('obp'))
-        try:
-            swagger = api.get_swagger()
-        except APIError as err:
-            messages.error(self.request, err)
-        else:
-            calls = []
-            for path, data in swagger['paths'].items():
-                # Only GET requests for now
-                if 'get' in data:
-                    call = {
-                        'urlpath': path,
-                        'method': 'get',
-                        'summary': data['get']['summary'],
-                        'responseCode': 200,
-                    }
-                    calls.append(call)
-            calls = sorted(calls, key=lambda call: call['summary'])
-            context.update({
-                'calls': calls,
-                'testconfigs': self.get_testconfigs(**kwargs),
-                'testconfig_pk': kwargs.get('testconfig_pk', 0),
-            })
+        if 'selected' in testconfigs and testconfigs['selected']:
+            api_version = testconfigs['selected'].api_version
+            try:
+                swagger = api.get_swagger(api_version)
+            except APIError as err:
+                messages.error(self.request, err)
+            else:
+                for path, data in swagger['paths'].items():
+                    # Only GET requests for now
+                    if 'get' in data:
+                        call = {
+                            'urlpath': path,
+                            'method': 'get',
+                            'summary': data['get']['summary'],
+                            'responseCode': 200,
+                        }
+                        calls.append(call)
+                calls = sorted(calls, key=lambda call: call['summary'])
+        context.update({
+            'calls': calls,
+            'testconfigs': testconfigs,
+            'testconfig_pk': testconfig_pk,
+        })
         return context
 
 
@@ -108,22 +112,25 @@ class RunView(LoginRequiredMixin, TemplateView):
             value = getattr(testconfig, match.lower())
             if value:
                 urlpath = self.api_replace(urlpath, match, value)
-        urlpath = '{}{}{}'.format(
-            settings.API_BASE_PATH, testconfig.api_version, urlpath)
         return urlpath
 
     def get_config(self, testmethod, testpath, testconfig_pk):
         """Gets test config from swagger and database"""
         urlpath = urllib.parse.unquote(testpath)
         config = {
-            'urlpath': urlpath,
+            'found': False,
             'method': testmethod,
             'status_code': 200,
             'summary': 'Unknown',
-            'found': False,
+            'urlpath': urlpath,
         }
         try:
-            swagger = self.api.get_swagger()
+            testconfig = TestConfiguration.objects.get(
+                owner=self.request.user, pk=testconfig_pk)
+        except TestConfiguration.DoesNotExist as err:
+            raise PermissionDenied
+        try:
+            swagger = self.api.get_swagger(testconfig.api_version)
         except APIError as err:
             messages.error(self.request, err)
         else:
@@ -132,16 +139,8 @@ class RunView(LoginRequiredMixin, TemplateView):
                     config.update({
                         'found': True,
                         'summary': data[testmethod]['summary'],
+                        'urlpath': self.get_urlpath(testconfig, path),
                     })
-                    try:
-                        testconfig = TestConfiguration.objects.get(
-                            owner=self.request.user, pk=testconfig_pk)
-                    except TestConfiguration.DoesNotExist as err:
-                        pass
-                    else:
-                        config.update({
-                            'urlpath': self.get_urlpath(testconfig, path),
-                        })
         return config
 
     def run_test(self, config):
