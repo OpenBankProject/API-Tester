@@ -138,6 +138,7 @@ class RunView(LoginRequiredMixin, TemplateView):
                 if path == urlpath and testmethod in data:
                     config.update({
                         'found': True,
+                        'operation_id': data[testmethod]['operationId'],
                         'summary': data[testmethod]['summary'],
                         'urlpath': self.get_urlpath(testconfig, path),
                     })
@@ -154,9 +155,6 @@ class RunView(LoginRequiredMixin, TemplateView):
             text = response.text
         text = json.dumps(
             text, sort_keys=True, indent=2, separators=(',', ': '))
-        truncate_chars = settings.RUNTESTS_TRUNCATE_API_RESPONSE
-        if len(text) > truncate_chars:
-            text = text[:truncate_chars] + '\n...'
         result = {
             'text': text,
             'execution_time': response.execution_time,
