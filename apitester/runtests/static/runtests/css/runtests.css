@@ -37,3 +37,10 @@
 #runtests .result .alert {
 	margin: 0;
 }
+
+#runtests .result button[aria-expanded=true] .glyphicon-chevron-right {
+	display: none;
+}
+#runtests .result button[aria-expanded=false] .glyphicon-chevron-down {
+	display: none;
+}
