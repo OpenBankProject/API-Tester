@@ -21,11 +21,15 @@ from .forms import TestConfigurationForm
 from .models import TestConfiguration
 
 
+# TODO: These have to map to attributes of models.TestConfiguration
 URLPATH_REPLACABLES = [
-    'USERNAME', 'BANK_ID', 'BRANCH_ID', 'ATM_ID', 'OTHER_ACCOUNT_ID',
-    'ACCOUNT_ID', 'VIEW_ID', 'USER_ID', 'PROVIDER_ID', 'CUSTOMER_ID',
-    'TRANSACTION_ID', 'FROM_CURRENCY_CODE', 'TO_CURRENCY_CODE', 'PRODUCT_CODE',
-    'MEETING_ID', 'CONSUMER_ID',
+    'API_VERSION',
+    'USERNAME', 'USER_ID', 'PROVIDER_ID',
+    'BANK_ID', 'BRANCH_ID', 'ATM_ID', 'PRODUCT_CODE',
+    'ACCOUNT_ID', 'VIEW_ID', 'TRANSACTION_ID', 'COUNTERPARTY_ID',
+    'OTHER_ACCOUNT_ID',
+    'CUSTOMER_ID', 'MEETING_ID', 'CONSUMER_ID',
+    'FROM_CURRENCY_CODE', 'TO_CURRENCY_CODE',
 ]
 
 

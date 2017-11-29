@@ -106,6 +106,13 @@ class TestConfiguration(models.Model):
         blank=True,
         null=True,
     )
+    counterparty_id = models.CharField(
+        max_length=255,
+        verbose_name='Counterparty Id',
+        help_text='Counterparty identifier',
+        blank=True,
+        null=True,
+    )
     from_currency_code = models.CharField(
         max_length=255,
         verbose_name='From Currency Code',
