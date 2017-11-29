@@ -159,7 +159,11 @@
 		</div>
 
 		<input class="btn btn-primary" type="submit" value="Submit" />
+	{% if object.pk %}
+		<a href="{% url 'runtests-index-testconfig' testconfig_pk=object.pk %}" class="btn btn-secondary">Cancel</a>
+	{% else %}
 		<a href="{% url 'runtests-index' %}" class="btn btn-secondary">Cancel</a>
+	{% endif %}
 	</form>
 </div>
 {% endblock content %}
