@@ -30,7 +30,7 @@ class GatewayLoginAuthenticator(Authenticator):
             'time_stamp': 'unused',
             'app_id': '',  # Do not create new consumer
             'app_name': '',  # Do not create new consumer
-            'temenos_id': '',  # Whatever that does
+            'cbs_id': '',  # Whatever that does
         }
         if settings.GATEWAYLOGIN_HAS_CBS:
             # Not sure if that is the right thing to do
