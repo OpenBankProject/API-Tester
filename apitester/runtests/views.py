@@ -70,10 +70,26 @@ class IndexView(LoginRequiredMixin, TemplateView):
                 for path, data in swagger['paths'].items():
                     # Only GET requests for now
                     if 'get' in data:
+                        # definition = data['get']['parameters'][0] if len(data['get']['parameters']) > 0 else None
+                        # definition = definition[14:]
+                        # params = swagger['definitions'][definition]
                         call = {
                             'urlpath': path,
                             'method': 'get',
+                            'params': None,
                             'summary': data['get']['summary'],
+                            'responseCode': 200,
+                        }
+                        calls.append(call)
+                    if 'post' in data:
+                        definition = data['post']['parameters'][0] if len(data['post']['parameters']) > 0 else None
+                        definition = definition['schema']['$ref'][14:]
+                        params = swagger['definitions'][definition]
+                        call = {
+                            'urlpath': path,
+                            'method': 'post',
+                            'params': params,
+                            'summary': data['post']['summary'],
                             'responseCode': 200,
                         }
                         calls.append(call)
