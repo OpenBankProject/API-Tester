@@ -138,13 +138,17 @@
 		{% for call in calls %}
 		<li class="runner" data-testpath="{% url 'runtests-run' testmethod=call.method testpath=call.urlpath|urlencode testconfig_pk=testconfig_pk %}">
 			<div class="row">
-				<div class="col-xs-9 col-sm-2">
+				<div class="col-xs-5 col-sm-2">
 					<div class="checkbox">
 						<label><input type="checkbox" checked="checked" /> {{ call.summary }}</label>
 					</div>
 				</div>
+                <div class="col-xs-3">
+                    <textarea name="" id="" cols="30" rows="10">{{ call.params }}</textarea>
+                </div>
+                <div class="col-xs-1">{{ call.method }}</div>
 				<div class="col-xs-3 col-sm-1">
-						<button class="btn btn-secondary">Test</button>
+						<button class="btn">Test</button>
 				</div>
 				<div class="col-xs-12 col-sm-9 result"></div>
 			</div>
