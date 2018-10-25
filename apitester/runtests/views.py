@@ -85,10 +85,16 @@ class IndexView(LoginRequiredMixin, TemplateView):
                         definition = data['post']['parameters'][0] if len(data['post']['parameters']) > 0 else None
                         definition = definition['schema']['$ref'][14:]
                         params = swagger['definitions'][definition]
+
+                        request_body = {}
+                        if len(params["required"]) > 0:
+                            for field in params["required"]:
+                                request_body[field] = params["properties"][field].get("example", "")
+
                         call = {
                             'urlpath': path,
                             'method': 'post',
-                            'params': params,
+                            'params': request_body,
                             'summary': data['post']['summary'],
                             'responseCode': 200,
                         }
