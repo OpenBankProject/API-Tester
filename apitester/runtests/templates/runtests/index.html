@@ -124,10 +124,10 @@
 				<button class="btn btn-primary form-control" id="run">Test selected</button>
 			</div>
 			<div class="col-xs-12 col-sm-2">
-				<button class="form-control" id="checkNone" />Uncheck all</button>
+				<button class="btn btn-default form-control" id="checkNone" />Uncheck all</button>
 			</div>
 			<div class="col-xs-12 col-sm-2">
-				<button class="form-control" id="checkAll" />Check all</button>
+				<button class="btn btn-default form-control" id="checkAll" />Check all</button>
 			</div>
 			<div class="col-xs-12 col-sm-4">
 			</div>
@@ -145,12 +145,13 @@
 				</div>
                 <div class="col-xs-3">
                     {% if call.method == "post" %}
-                    <textarea name="" id="" cols="30" rows="10">{{ call.params }}</textarea>
+                    <textarea class="form-control" name="" id="" cols="30" rows="5">{{ call.params }}</textarea>
                     {% endif %}
+                    <button class="btn btn-success">Save</button>
                 </div>
                 <div class="col-xs-1">{{ call.method }}</div>
 				<div class="col-xs-3 col-sm-1">
-						<button class="btn">Test</button>
+						<button class="btn btn-default">Test</button>
 				</div>
 				<div class="col-xs-12 col-sm-9 result"></div>
 			</div>
