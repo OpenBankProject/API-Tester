@@ -10,7 +10,8 @@ from .views import (
     RunView,
     TestConfigurationCreateView,
     TestConfigurationUpdateView,
-    TestConfigurationDeleteView
+    TestConfigurationDeleteView,
+    saveJsonBody
 )
 
 urlpatterns = [
@@ -32,4 +33,6 @@ urlpatterns = [
     url(r'testconfig/(?P<pk>[0-9]+)/delete/$',
         TestConfigurationDeleteView.as_view(),
         name='runtests-testconfig-delete'),
+    url(r'save/json_body', saveJsonBody,
+        name='runtests-save-json_body'),
 ]

@@ -140,18 +140,18 @@
 			<div class="row">
 				<div class="col-xs-5 col-sm-2">
 					<div class="checkbox">
-						<label><input type="checkbox" checked="checked" /> {{ call.summary }}</label>
+						<label><input type="checkbox" checked="checked" /> {{ call.summary }}</label><input type="hidden" value="{{  call.operationId }}">
 					</div>
 				</div>
                 <div class="col-xs-3">
                     {% if call.method == "post" %}
                     <textarea class="form-control" name="" id="" cols="30" rows="5">{{ call.params }}</textarea>
                     {% endif %}
-                    <button class="btn btn-success">Save</button>
+                    <button class="btn btn-success forSave">Save</button><span style="display: none;margin-left: 5px;background-color:#00cc00">saved.</span>
                 </div>
                 <div class="col-xs-1">{{ call.method }}</div>
 				<div class="col-xs-3 col-sm-1">
-						<button class="btn btn-default">Test</button>
+						<button class="btn btn-default forTest">Test</button>
 				</div>
 				<div class="col-xs-12 col-sm-9 result"></div>
 			</div>
@@ -167,6 +167,8 @@
 	<script type="text/javascript" src="{% static 'runtests/js/runtests.js' %}"></script>
 	<script type="text/javascript">
 		URL_RUNTESTS_INDEX = "{% url 'runtests-index' %}";
+		CURRENT_PROFILE_ID = "{{  testconfigs.selected.pk }}"
+        CSRF = "{{ csrf_token }}"
 	</script>
 {% endblock extrajs %}
 

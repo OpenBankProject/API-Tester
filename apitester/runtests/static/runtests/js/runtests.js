@@ -36,11 +36,30 @@ $(function() {
 			}
 		}
 	});
-	$('.runner button').click(function() {
+	$('.runner button.forTest').click(function() {
 		var runner = $(this).parent().parent().parent();
 		$(runner).find('.result').empty();
 		runTest(runner);
 	});
+    $('.runner button.forSave').click(function() {
+    	var t = $(this)
+        var runner = $(this).parent().parent().parent();
+        jsonBody = $(runner).find('textarea').val();
+		operationId = $(runner).find('input[type="hidden"]').val();
+		console.info({
+            'json_body': jsonBody,
+            'operation_id': operationId,
+            'profile_id' : window.CURRENT_PROFILE_ID
+        });
+        $.post('/runtests/save/json_body', {
+        	'json_body': jsonBody,
+			'operation_id': operationId,
+			'profile_id' : window.CURRENT_PROFILE_ID,
+            'csrfmiddlewaretoken': window.CSRF
+		}, function (response) {
+        	t.next().show().fadeOut(1000);
+        });
+    });
 
 	$('#checkNone').click(function() {
 		$('.runner').find('input').prop('checked', false);

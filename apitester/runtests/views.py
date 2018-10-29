@@ -18,7 +18,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from obp.api import API, APIError
 
 from .forms import TestConfigurationForm
-from .models import TestConfiguration
+from .models import TestConfiguration,ProfileOperation
 
 
 # TODO: These have to map to attributes of models.TestConfiguration
@@ -68,20 +68,22 @@ class IndexView(LoginRequiredMixin, TemplateView):
                 messages.error(self.request, err)
             else:
                 for path, data in swagger['paths'].items():
-                    # Only GET requests for now
+                    # Get saved profile operations
+                    # TODO
+
                     if 'get' in data:
-                        # definition = data['get']['parameters'][0] if len(data['get']['parameters']) > 0 else None
-                        # definition = definition[14:]
-                        # params = swagger['definitions'][definition]
                         call = {
                             'urlpath': path,
                             'method': 'get',
                             'params': None,
                             'summary': data['get']['summary'],
+                            'operationId': data['get']['operationId'],
                             'responseCode': 200,
                         }
                         calls.append(call)
                     if 'post' in data:
+
+                        # generate json body from swagger
                         definition = data['post']['parameters'][0] if len(data['post']['parameters']) > 0 else None
                         definition = definition['schema']['$ref'][14:]
                         params = swagger['definitions'][definition]
@@ -89,6 +91,7 @@ class IndexView(LoginRequiredMixin, TemplateView):
                         request_body = {}
                         if len(params["required"]) > 0:
                             for field in params["required"]:
+                                # Match Profile variables
                                 field_names = [ f.name for f in TestConfiguration._meta.fields]
                                 if field in field_names:
                                     request_body[field] = getattr(testconfigs["selected"], field)
@@ -100,6 +103,7 @@ class IndexView(LoginRequiredMixin, TemplateView):
                             'method': 'post',
                             'params': json.dumps(request_body, indent=4),
                             'summary': data['post']['summary'],
+                            'operationId': data['post']['operationId'],
                             'responseCode': 200,
                         }
                         calls.append(call)
@@ -267,3 +271,24 @@ class TestConfigurationDeleteView(LoginRequiredMixin, DeleteView):
         if self.request.user != object.owner:
             raise PermissionDenied
         return object
+
+
+def saveJsonBody(request):
+
+    operation_id = request.POST.get('operation_id')
+    json_body = request.POST.get('json_body', '')
+    profile_id = request.POST.get('profile_id')
+
+    data = {
+        'operation_id' : operation_id,
+        'json_body': json_body,
+        'profile_id': profile_id,
+    }
+
+    obj, created = ProfileOperation.objects.update_or_create(
+        operation_id=operation_id,
+        profile_id=profile_id,
+        defaults=data
+    )
+
+    return JsonResponse({'state': True})

@@ -28,6 +28,7 @@ class TestConfiguration(models.Model):
         help_text='User who owns this configuration',
         blank=False,
         null=False,
+        on_delete=models.DO_NOTHING
     )
     username = models.CharField(
         max_length=255,
@@ -152,6 +153,34 @@ class TestConfiguration(models.Model):
     class Meta:
         verbose_name = 'Test Configuration'
         verbose_name_plural = 'Test Configurations'
+
+    def __str__(self):
+        return self.name
+
+
+class ProfileOperation(models.Model):
+    profile_id = models.IntegerField(
+        verbose_name="Profile id",
+        help_text="Test Profile id"
+    )
+    operation_id = models.CharField(
+        max_length=255,
+        verbose_name="Operation id ",
+        help_text="Test endpoint opreation id",
+        blank=True,
+        null=True,
+        unique=True,
+    )
+    json_body = models.TextField(
+        max_length=65535,
+        verbose_name="Json body",
+        help_text="The json body to the  test request",
+
+    )
+
+    class Meta:
+        verbose_name = 'Test Profile Operation'
+        verbose_name_plural = 'Test Profile Operation'
 
     def __str__(self):
         return self.name
