@@ -68,9 +68,6 @@ class IndexView(LoginRequiredMixin, TemplateView):
                 messages.error(self.request, err)
             else:
                 for path, data in swagger['paths'].items():
-                    # Get saved profile operations
-                    # TODO
-
                     if 'get' in data:
                         call = {
                             'urlpath': path,
@@ -83,25 +80,40 @@ class IndexView(LoginRequiredMixin, TemplateView):
                         calls.append(call)
                     if 'post' in data:
 
-                        # generate json body from swagger
-                        definition = data['post']['parameters'][0] if len(data['post']['parameters']) > 0 else None
-                        definition = definition['schema']['$ref'][14:]
-                        params = swagger['definitions'][definition]
+                        params = ''
 
-                        request_body = {}
-                        if len(params["required"]) > 0:
-                            for field in params["required"]:
-                                # Match Profile variables
-                                field_names = [ f.name for f in TestConfiguration._meta.fields]
-                                if field in field_names:
-                                    request_body[field] = getattr(testconfigs["selected"], field)
-                                else:
-                                    request_body[field] = params["properties"][field].get("example", "")
+                        # Get saved profile operations
+                        try:
+                            obj = ProfileOperation.objects.get(
+                                profile_id=testconfig_pk,
+                                operation_id=data['post']['operationId']
+                            )
+                        except ProfileOperation.DoesNotExist:
+                            obj = None
+
+                        if obj is not None:
+                            params = obj.json_body
+                        else:
+                            # generate json body from swagger
+                            definition = data['post']['parameters'][0] if len(data['post']['parameters']) > 0 else None
+                            definition = definition['schema']['$ref'][14:]
+                            params = swagger['definitions'][definition]
+
+                            request_body = {}
+                            if len(params["required"]) > 0:
+                                for field in params["required"]:
+                                    # Match Profile variables
+                                    field_names = [ f.name for f in TestConfiguration._meta.fields]
+                                    if field in field_names:
+                                        request_body[field] = getattr(testconfigs["selected"], field)
+                                    else:
+                                        request_body[field] = params["properties"][field].get("example", "")
+                            params = json.dumps(request_body, indent=4)
 
                         call = {
                             'urlpath': path,
                             'method': 'post',
-                            'params': json.dumps(request_body, indent=4),
+                            'params': params,
                             'summary': data['post']['summary'],
                             'operationId': data['post']['operationId'],
                             'responseCode': 200,
@@ -111,7 +123,7 @@ class IndexView(LoginRequiredMixin, TemplateView):
         context.update({
             'calls': calls,
             'testconfigs': testconfigs,
-            'testconfig_pk': testconfig_pk,
+            'testconfig_pk': testconfig_pk
         })
         return context
 
