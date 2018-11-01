@@ -160,15 +160,20 @@ class RunView(LoginRequiredMixin, TemplateView):
                 urlpath = self.api_replace(urlpath, match, value)
         return urlpath
 
-    def get_config(self, testmethod, testpath, testconfig_pk):
+    def get_config(self, testmethod, testpath, testconfig_pk, operation_id):
         """Gets test config from swagger and database"""
         urlpath = urllib.parse.unquote(testpath)
+
+
         config = {
             'found': False,
             'method': testmethod,
-            'status_code': 200,
+            'status_code': 200 if testmethod == 'get' else 201,
             'summary': 'Unknown',
             'urlpath': urlpath,
+            'operation_id': operation_id,
+            'profile_id': testconfig_pk,
+            'payload': self.request.POST.get('json_body')
         }
         try:
             testconfig = TestConfiguration.objects.get(
@@ -190,11 +195,18 @@ class RunView(LoginRequiredMixin, TemplateView):
                     })
         return config
 
+    def post(self, request, *args, **kwargs):
+        context = self.get_context_data(**kwargs)
+        return self.render_to_response(context)
+
     def run_test(self, config):
         """Runs a test with given config"""
         url = '{}{}'.format(settings.API_HOST, config['urlpath'])
         # Let APIError bubble up
-        response = self.api.call(config['method'], url)
+        if config['method'] == 'get':
+            response = self.api.call(config['method'], url)
+        else:
+            response = self.api.call(config['method'], url, json.loads(config['payload']))
         try:
             text = response.json()
         except json.decoder.JSONDecodeError as err:

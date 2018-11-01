@@ -21,7 +21,7 @@ urlpatterns = [
     url(r'^(?P<testconfig_pk>[0-9]+)',
         IndexView.as_view(),
         name='runtests-index-testconfig'),
-    url(r'^run/(?P<testmethod>\w+)/(?P<testpath>.+)/(?P<testconfig_pk>[0-9]+)',
+    url(r'^run/(?P<testmethod>\w+)/(?P<testpath>.+)/(?P<testconfig_pk>[0-9]+)/(?P<operation_id>.+)',
         RunView.as_view(),
         name='runtests-run'),
     url(r'testconfig/add/$',

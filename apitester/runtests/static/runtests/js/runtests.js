@@ -5,7 +5,10 @@ $(function() {
 
 	function runTest(runner) {
 		var testpath = runner.data('testpath');
-		$.get(testpath, function (data) {
+		$.post(testpath,  {
+            'json_body': runner.find('textarea').val(),
+            'csrfmiddlewaretoken': window.CSRF
+        }, function (data) {
 			var alertType = 'success';
 			var msg = '';
 			var collapse = '';
@@ -46,11 +49,6 @@ $(function() {
         var runner = $(this).parent().parent().parent();
         jsonBody = $(runner).find('textarea').val();
 		operationId = $(runner).find('input[type="hidden"]').val();
-		console.info({
-            'json_body': jsonBody,
-            'operation_id': operationId,
-            'profile_id' : window.CURRENT_PROFILE_ID
-        });
         $.post('/runtests/save/json_body', {
         	'json_body': jsonBody,
 			'operation_id': operationId,
