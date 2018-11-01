@@ -6,3 +6,4 @@ apitester/apitester/local_settings.py
 API-Tester.iml
 .idea
 venv/
+.DS_Store

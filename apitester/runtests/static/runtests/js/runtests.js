@@ -5,7 +5,10 @@ $(function() {
 
 	function runTest(runner) {
 		var testpath = runner.data('testpath');
-		$.get(testpath, function (data) {
+		$.post(testpath,  {
+            'json_body': runner.find('textarea').val(),
+            'csrfmiddlewaretoken': window.CSRF
+        }, function (data) {
 			var alertType = 'success';
 			var msg = '';
 			var collapse = '';
@@ -36,11 +39,25 @@ $(function() {
 			}
 		}
 	});
-	$('.runner button').click(function() {
+	$('.runner button.forTest').click(function() {
 		var runner = $(this).parent().parent().parent();
 		$(runner).find('.result').empty();
 		runTest(runner);
 	});
+    $('.runner button.forSave').click(function() {
+    	var t = $(this)
+        var runner = $(this).parent().parent().parent();
+        jsonBody = $(runner).find('textarea').val();
+		operationId = $(runner).find('input[type="hidden"]').val();
+        $.post('/runtests/save/json_body', {
+        	'json_body': jsonBody,
+			'operation_id': operationId,
+			'profile_id' : window.CURRENT_PROFILE_ID,
+            'csrfmiddlewaretoken': window.CSRF
+		}, function (response) {
+        	t.next().show().fadeOut(1000);
+        });
+    });
 
 	$('#checkNone').click(function() {
 		$('.runner').find('input').prop('checked', false);

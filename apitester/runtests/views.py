@@ -18,7 +18,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from obp.api import API, APIError
 
 from .forms import TestConfigurationForm
-from .models import TestConfiguration
+from .models import TestConfiguration,ProfileOperation
 
 
 # TODO: These have to map to attributes of models.TestConfiguration
@@ -68,28 +68,54 @@ class IndexView(LoginRequiredMixin, TemplateView):
                 messages.error(self.request, err)
             else:
                 for path, data in swagger['paths'].items():
-                    # Only GET requests for now
                     if 'get' in data:
-                        # definition = data['get']['parameters'][0] if len(data['get']['parameters']) > 0 else None
-                        # definition = definition[14:]
-                        # params = swagger['definitions'][definition]
                         call = {
                             'urlpath': path,
                             'method': 'get',
                             'params': None,
                             'summary': data['get']['summary'],
+                            'operationId': data['get']['operationId'],
                             'responseCode': 200,
                         }
                         calls.append(call)
                     if 'post' in data:
-                        definition = data['post']['parameters'][0] if len(data['post']['parameters']) > 0 else None
-                        definition = definition['schema']['$ref'][14:]
-                        params = swagger['definitions'][definition]
+
+                        params = ''
+
+                        # Get saved profile operations
+                        try:
+                            obj = ProfileOperation.objects.get(
+                                profile_id=testconfig_pk,
+                                operation_id=data['post']['operationId']
+                            )
+                        except ProfileOperation.DoesNotExist:
+                            obj = None
+
+                        if obj is not None:
+                            params = obj.json_body
+                        else:
+                            # generate json body from swagger
+                            definition = data['post']['parameters'][0] if len(data['post']['parameters']) > 0 else None
+                            definition = definition['schema']['$ref'][14:]
+                            params = swagger['definitions'][definition]
+
+                            request_body = {}
+                            if len(params["required"]) > 0:
+                                for field in params["required"]:
+                                    # Match Profile variables
+                                    field_names = [ f.name for f in TestConfiguration._meta.fields]
+                                    if field in field_names:
+                                        request_body[field] = getattr(testconfigs["selected"], field)
+                                    else:
+                                        request_body[field] = params["properties"][field].get("example", "")
+                            params = json.dumps(request_body, indent=4)
+
                         call = {
                             'urlpath': path,
                             'method': 'post',
                             'params': params,
                             'summary': data['post']['summary'],
+                            'operationId': data['post']['operationId'],
                             'responseCode': 200,
                         }
                         calls.append(call)
@@ -97,7 +123,7 @@ class IndexView(LoginRequiredMixin, TemplateView):
         context.update({
             'calls': calls,
             'testconfigs': testconfigs,
-            'testconfig_pk': testconfig_pk,
+            'testconfig_pk': testconfig_pk
         })
         return context
 
@@ -134,15 +160,20 @@ class RunView(LoginRequiredMixin, TemplateView):
                 urlpath = self.api_replace(urlpath, match, value)
         return urlpath
 
-    def get_config(self, testmethod, testpath, testconfig_pk):
+    def get_config(self, testmethod, testpath, testconfig_pk, operation_id):
         """Gets test config from swagger and database"""
         urlpath = urllib.parse.unquote(testpath)
+
+
         config = {
             'found': False,
             'method': testmethod,
-            'status_code': 200,
+            'status_code': 200 if testmethod == 'get' else 201,
             'summary': 'Unknown',
             'urlpath': urlpath,
+            'operation_id': operation_id,
+            'profile_id': testconfig_pk,
+            'payload': self.request.POST.get('json_body')
         }
         try:
             testconfig = TestConfiguration.objects.get(
@@ -164,11 +195,18 @@ class RunView(LoginRequiredMixin, TemplateView):
                     })
         return config
 
+    def post(self, request, *args, **kwargs):
+        context = self.get_context_data(**kwargs)
+        return self.render_to_response(context)
+
     def run_test(self, config):
         """Runs a test with given config"""
         url = '{}{}'.format(settings.API_HOST, config['urlpath'])
         # Let APIError bubble up
-        response = self.api.call(config['method'], url)
+        if config['method'] == 'get':
+            response = self.api.call(config['method'], url)
+        else:
+            response = self.api.call(config['method'], url, json.loads(config['payload']))
         try:
             text = response.json()
         except json.decoder.JSONDecodeError as err:
@@ -257,3 +295,24 @@ class TestConfigurationDeleteView(LoginRequiredMixin, DeleteView):
         if self.request.user != object.owner:
             raise PermissionDenied
         return object
+
+
+def saveJsonBody(request):
+
+    operation_id = request.POST.get('operation_id')
+    json_body = request.POST.get('json_body', '')
+    profile_id = request.POST.get('profile_id')
+
+    data = {
+        'operation_id' : operation_id,
+        'json_body': json_body,
+        'profile_id': profile_id,
+    }
+
+    obj, created = ProfileOperation.objects.update_or_create(
+        operation_id=operation_id,
+        profile_id=profile_id,
+        defaults=data
+    )
+
+    return JsonResponse({'state': True})
