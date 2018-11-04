@@ -54,6 +54,48 @@ class IndexView(LoginRequiredMixin, TemplateView):
                 raise PermissionDenied
         return testconfigs
 
+    def get_post_or_update(self, method, testconfigs, testconfig_pk, path, data, swagger ):
+
+        params = ''
+
+        # Get saved profile operations
+        try:
+            obj = ProfileOperation.objects.get(
+                profile_id=testconfig_pk,
+                operation_id=data[method]['operationId']
+            )
+        except ProfileOperation.DoesNotExist:
+            obj = None
+
+        if obj is not None:
+            params = obj.json_body
+        else:
+            # generate json body from swagger
+            definition = data[method]['parameters'][0] if len(data[method]['parameters']) > 0 else None
+            definition = definition['schema']['$ref'][14:]
+            params = swagger['definitions'][definition]
+
+            request_body = {}
+            if len(params["required"]) > 0:
+                for field in params["required"]:
+                    # Match Profile variables
+                    field_names = [ f.name for f in TestConfiguration._meta.fields]
+                    if field in field_names:
+                        request_body[field] = getattr(testconfigs["selected"], field)
+                    else:
+                        request_body[field] = params["properties"][field].get("example", "")
+            params = json.dumps(request_body, indent=4)
+
+        return {
+            'urlpath': path,
+            'method': method,
+            'params': params,
+            'summary': data[method]['summary'],
+            'operationId': data[method]['operationId'],
+            'responseCode': 200,
+        }
+
+
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)
         calls = []
@@ -79,46 +121,24 @@ class IndexView(LoginRequiredMixin, TemplateView):
                         }
                         calls.append(call)
                     if 'post' in data:
+                        call = self.get_post_or_update('post', testconfigs, testconfig_pk, path, data, swagger)
+                        calls.append(call)
 
-                        params = ''
+                    if 'put' in data:
+                        call = self.get_post_or_update('put', testconfigs, testconfig_pk, path, data, swagger)
+                        calls.append(call)
 
-                        # Get saved profile operations
-                        try:
-                            obj = ProfileOperation.objects.get(
-                                profile_id=testconfig_pk,
-                                operation_id=data['post']['operationId']
-                            )
-                        except ProfileOperation.DoesNotExist:
-                            obj = None
-
-                        if obj is not None:
-                            params = obj.json_body
-                        else:
-                            # generate json body from swagger
-                            definition = data['post']['parameters'][0] if len(data['post']['parameters']) > 0 else None
-                            definition = definition['schema']['$ref'][14:]
-                            params = swagger['definitions'][definition]
-
-                            request_body = {}
-                            if len(params["required"]) > 0:
-                                for field in params["required"]:
-                                    # Match Profile variables
-                                    field_names = [ f.name for f in TestConfiguration._meta.fields]
-                                    if field in field_names:
-                                        request_body[field] = getattr(testconfigs["selected"], field)
-                                    else:
-                                        request_body[field] = params["properties"][field].get("example", "")
-                            params = json.dumps(request_body, indent=4)
-
+                    if 'delete' in data:
                         call = {
                             'urlpath': path,
-                            'method': 'post',
-                            'params': params,
-                            'summary': data['post']['summary'],
-                            'operationId': data['post']['operationId'],
+                            'method': 'delete',
+                            'params': None,
+                            'summary': data['delete']['summary'],
+                            'operationId': data['delete']['operationId'],
                             'responseCode': 200,
                         }
                         calls.append(call)
+
                 calls = sorted(calls, key=lambda call: call['summary'])
         context.update({
             'calls': calls,
@@ -164,11 +184,19 @@ class RunView(LoginRequiredMixin, TemplateView):
         """Gets test config from swagger and database"""
         urlpath = urllib.parse.unquote(testpath)
 
+        status_code = 200
+
+        if testmethod == 'post':
+            status_code = 201
+        elif testmethod == 'put':
+            status_code = 200
+        elif testmethod == 'delete':
+            status_code = 204
 
         config = {
             'found': False,
             'method': testmethod,
-            'status_code': 200 if testmethod == 'get' else 201,
+            'status_code': status_code,
             'summary': 'Unknown',
             'urlpath': urlpath,
             'operation_id': operation_id,
@@ -203,7 +231,7 @@ class RunView(LoginRequiredMixin, TemplateView):
         """Runs a test with given config"""
         url = '{}{}'.format(settings.API_HOST, config['urlpath'])
         # Let APIError bubble up
-        if config['method'] == 'get':
+        if config['method'] == 'get' or config['method'] == 'delete':
             response = self.api.call(config['method'], url)
         else:
             response = self.api.call(config['method'], url, json.loads(config['payload']))

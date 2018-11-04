@@ -144,7 +144,7 @@
 					</div>
 				</div>
                 <div class="col-xs-3">
-                    {% if call.method == "post" %}
+                    {% if call.method == "post" or call.method == 'put' %}
                     <textarea class="form-control" name="" id="" cols="30" rows="5">{{ call.params }}</textarea>
                     <button class="btn btn-success forSave">Save</button><span style="display: none;margin-left: 5px;background-color:#00cc00">saved.</span>
                     {% endif %}
