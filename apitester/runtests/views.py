@@ -57,7 +57,7 @@ class IndexView(LoginRequiredMixin, TemplateView):
     def get_post_or_update(self, method, testconfigs, testconfig_pk, path, data, swagger ):
 
         params = ''
-
+        order = 0
         # Get saved profile operations
         try:
             obj = ProfileOperation.objects.get(
@@ -69,7 +69,8 @@ class IndexView(LoginRequiredMixin, TemplateView):
 
         if obj is not None:
             params = obj.json_body
-        else:
+            order = obj.order
+        elif method == 'post' or method == 'put':
             # generate json body from swagger
             definition = data[method]['parameters'][0] if len(data[method]['parameters']) > 0 else None
             definition = definition['schema']['$ref'][14:]
@@ -89,12 +90,12 @@ class IndexView(LoginRequiredMixin, TemplateView):
         return {
             'urlpath': path,
             'method': method,
+            'order': order,
             'params': params,
             'summary': data[method]['summary'],
             'operationId': data[method]['operationId'],
             'responseCode': 200,
         }
-
 
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)
@@ -111,14 +112,7 @@ class IndexView(LoginRequiredMixin, TemplateView):
             else:
                 for path, data in swagger['paths'].items():
                     if 'get' in data:
-                        call = {
-                            'urlpath': path,
-                            'method': 'get',
-                            'params': None,
-                            'summary': data['get']['summary'],
-                            'operationId': data['get']['operationId'],
-                            'responseCode': 200,
-                        }
+                        call = self.get_post_or_update('get', testconfigs, testconfig_pk, path, data, swagger)
                         calls.append(call)
                     if 'post' in data:
                         call = self.get_post_or_update('post', testconfigs, testconfig_pk, path, data, swagger)
@@ -129,17 +123,10 @@ class IndexView(LoginRequiredMixin, TemplateView):
                         calls.append(call)
 
                     if 'delete' in data:
-                        call = {
-                            'urlpath': path,
-                            'method': 'delete',
-                            'params': None,
-                            'summary': data['delete']['summary'],
-                            'operationId': data['delete']['operationId'],
-                            'responseCode': 200,
-                        }
+                        call = self.get_post_or_update('delete', testconfigs, testconfig_pk, path, data, swagger)
                         calls.append(call)
 
-                calls = sorted(calls, key=lambda call: call['summary'])
+                calls = sorted(calls, key=lambda call: call['order'], reverse=True)
         context.update({
             'calls': calls,
             'testconfigs': testconfigs,
@@ -330,11 +317,13 @@ def saveJsonBody(request):
     operation_id = request.POST.get('operation_id')
     json_body = request.POST.get('json_body', '')
     profile_id = request.POST.get('profile_id')
+    order = request.POST.get('order')
 
     data = {
         'operation_id' : operation_id,
         'json_body': json_body,
         'profile_id': profile_id,
+        'order': order,
     }
 
     obj, created = ProfileOperation.objects.update_or_create(

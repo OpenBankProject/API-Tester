@@ -177,6 +177,11 @@ class ProfileOperation(models.Model):
         help_text="The json body to the  test request",
 
     )
+    order = models.IntegerField(
+        verbose_name="Order",
+        help_text="Test order",
+        default=0
+    )
 
     class Meta:
         verbose_name = 'Test Profile Operation'
