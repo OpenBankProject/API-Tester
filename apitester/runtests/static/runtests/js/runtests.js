@@ -49,10 +49,12 @@ $(function() {
         var runner = $(this).parent().parent().parent();
         jsonBody = $(runner).find('textarea').val();
 		operationId = $(runner).find('input[type="hidden"]').val();
+		order = $(runner).find('input[name="order"]').val();
         $.post('/runtests/save/json_body', {
         	'json_body': jsonBody,
 			'operation_id': operationId,
 			'profile_id' : window.CURRENT_PROFILE_ID,
+            'order': order,
             'csrfmiddlewaretoken': window.CSRF
 		}, function (response) {
         	t.next().show().fadeOut(1000);
