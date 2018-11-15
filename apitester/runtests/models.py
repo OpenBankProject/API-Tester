@@ -182,6 +182,13 @@ class ProfileOperation(models.Model):
         help_text="Test order",
         default=0
     )
+    urlpath = models.CharField(
+        max_length=255,
+        verbose_name="The url",
+        help_text="The url",
+        blank=True,
+        null=True,
+    )
 
     class Meta:
         verbose_name = 'Test Profile Operation'

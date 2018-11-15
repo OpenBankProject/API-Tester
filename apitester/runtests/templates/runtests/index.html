@@ -143,8 +143,8 @@
 						<label><input type="checkbox" checked="checked" /> {{ call.summary }}</label><input type="hidden" value="{{  call.operationId }}">
 					</div>
 				</div>
-                <div class="col-xs-2">
-                    <input type="text" name="url" value="{{ call.url }}">
+                <div class="col-xs-5">
+                    <input class="form-control" type="text" name="urlpath" size="20" value="{{ call.urlpath }}">
                 </div>
                 <div class="col-xs-3">
                     {% if call.method == "post" or call.method == 'put' %}
