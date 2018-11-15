@@ -294,6 +294,11 @@ class TestConfigurationUpdateView(LoginRequiredMixin, UpdateView):
             raise PermissionDenied
         return object
 
+
+    def form_valid(self, form):
+        form.instance.owner = self.request.user
+        return super(TestConfigurationUpdateView, self).form_valid(form)
+
     def get_success_url(self):
         return reverse('runtests-index-testconfig', kwargs={
             'testconfig_pk': self.object.pk,

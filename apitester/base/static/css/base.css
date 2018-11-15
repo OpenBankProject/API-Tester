@@ -128,3 +128,7 @@ div.filter {
 .authentication-method {
 	display: none;
 }
+
+.errorlist {
+	color : #ff0000;
+}
