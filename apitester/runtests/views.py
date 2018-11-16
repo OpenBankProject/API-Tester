@@ -88,7 +88,7 @@ class IndexView(LoginRequiredMixin, TemplateView):
             params = json.dumps(request_body, indent=4)
 
         return {
-            'urlpath': path,
+            'urlpath': self.get_urlpath(testconfigs["selected"], path),
             'method': method,
             'order': order,
             'params': params,
@@ -97,12 +97,33 @@ class IndexView(LoginRequiredMixin, TemplateView):
             'responseCode': 200,
         }
 
+
+    def api_replace(self, string, match, value):
+        """Helper to replace format strings from the API"""
+        # API sometimes uses '{match}' or 'match' to denote variables
+        return string. \
+            replace('{{{}}}'.format(match), value). \
+            replace(match, value)
+
+    def get_urlpath(self, testconfig, path):
+        """
+        Gets a URL path
+        where placeholders in given path are replaced by values from testconfig
+        """
+        urlpath = path
+        for match in URLPATH_REPLACABLES:
+            value = getattr(testconfig, match.lower())
+            if value:
+                urlpath = self.api_replace(urlpath, match, value)
+        return urlpath
+
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)
         calls = []
         testconfig_pk = kwargs.get('testconfig_pk', 0)
         testconfigs = self.get_testconfigs(testconfig_pk)
         api = API(self.request.session.get('obp'))
+
         if 'selected' in testconfigs and testconfigs['selected']:
             api_version = testconfigs['selected'].api_version
             try:
@@ -130,7 +151,7 @@ class IndexView(LoginRequiredMixin, TemplateView):
         context.update({
             'calls': calls,
             'testconfigs': testconfigs,
-            'testconfig_pk': testconfig_pk
+            'testconfig_pk': testconfig_pk,
         })
         return context
 
@@ -294,6 +315,11 @@ class TestConfigurationUpdateView(LoginRequiredMixin, UpdateView):
             raise PermissionDenied
         return object
 
+
+    def form_valid(self, form):
+        form.instance.owner = self.request.user
+        return super(TestConfigurationUpdateView, self).form_valid(form)
+
     def get_success_url(self):
         return reverse('runtests-index-testconfig', kwargs={
             'testconfig_pk': self.object.pk,
@@ -318,12 +344,14 @@ def saveJsonBody(request):
     json_body = request.POST.get('json_body', '')
     profile_id = request.POST.get('profile_id')
     order = request.POST.get('order')
+    urlpath = request.POST.get('urlpath')
 
     data = {
         'operation_id' : operation_id,
         'json_body': json_body,
         'profile_id': profile_id,
         'order': order,
+        'urlpath': urlpath
     }
 
     obj, created = ProfileOperation.objects.update_or_create(
