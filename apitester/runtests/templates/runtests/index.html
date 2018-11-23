@@ -143,8 +143,8 @@
 						<label><input type="checkbox" checked="checked" /> {{ call.summary }}</label><input type="hidden" value="{{  call.operationId }}">
 					</div>
 				</div>
-                <div class="col-xs-5">
-                    <input class="form-control" type="text" name="urlpath" size="20" value="{{ call.urlpath }}">
+                <div class="col-xs-4">
+                   <span> {{ call.method |upper}} </span> <input style="display: inline-block;width:85%"  class="form-control" type="text" name="urlpath"  value="{{ call.urlpath }}">
                 </div>
                 <div class="col-xs-3">
                     {% if call.method == "post" or call.method == 'put' %}
@@ -152,7 +152,6 @@
                     {% endif %}
                 </div>
                 <div class="col-xs-1"><input  class="form-control" type="text" name="order" size="1" value="{{  call.order }}" /></div>
-                <div class="col-xs-1">{{ call.method |upper}}</div>
 				<div class="col-xs-2 col-sm-1">
 						<button class="btn btn-default forTest">Test</button>
                         <button class="btn btn-success forSave">Save</button><span style="display: none;margin-left: 5px;background-color:#00cc00">saved.</span>
