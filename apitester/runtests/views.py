@@ -202,33 +202,16 @@ class RunView(LoginRequiredMixin, TemplateView):
             status_code = 204
 
         config = {
-            'found': False,
+            'found': True,
             'method': testmethod,
             'status_code': status_code,
-            'summary': 'Unknown',
+            'summary': '',
             'urlpath': urlpath,
             'operation_id': operation_id,
             'profile_id': testconfig_pk,
             'payload': self.request.POST.get('json_body')
         }
-        try:
-            testconfig = TestConfiguration.objects.get(
-                owner=self.request.user, pk=testconfig_pk)
-        except TestConfiguration.DoesNotExist as err:
-            raise PermissionDenied
-        try:
-            swagger = self.api.get_swagger(testconfig.api_version)
-        except APIError as err:
-            messages.error(self.request, err)
-        else:
-            for path, data in swagger['paths'].items():
-                if path == urlpath and testmethod in data:
-                    config.update({
-                        'found': True,
-                        'operation_id': data[testmethod]['operationId'],
-                        'summary': data[testmethod]['summary'],
-                        'urlpath': self.get_urlpath(testconfig, path),
-                    })
+
         return config
 
     def post(self, request, *args, **kwargs):
