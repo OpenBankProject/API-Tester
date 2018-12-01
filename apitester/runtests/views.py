@@ -58,6 +58,7 @@ class IndexView(LoginRequiredMixin, TemplateView):
 
         params = ''
         order = 0
+        urlpath = ''
         # Get saved profile operations
         try:
             obj = ProfileOperation.objects.get(
@@ -70,6 +71,7 @@ class IndexView(LoginRequiredMixin, TemplateView):
         if obj is not None:
             params = obj.json_body
             order = obj.order
+            urlpath = obj.urlpath
         elif method == 'post' or method == 'put':
             # generate json body from swagger
             definition = data[method]['parameters'][0] if len(data[method]['parameters']) > 0 else None
@@ -88,7 +90,7 @@ class IndexView(LoginRequiredMixin, TemplateView):
             params = json.dumps(request_body, indent=4)
 
         return {
-            'urlpath': self.get_urlpath(testconfigs["selected"], path),
+            'urlpath': urlpath if urlpath != '' else self.get_urlpath(testconfigs["selected"], path),
             'method': method,
             'order': order,
             'params': params,
