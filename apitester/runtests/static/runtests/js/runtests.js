@@ -4,7 +4,12 @@ $(function() {
 	}
 
 	function runTest(runner) {
-		var testpath = runner.data('testpath');
+		//var testpath = runner.data('testpath');
+		testmethod = runner.data('testmethod');
+        testconfig_pk = runner.data('testconfig_pk');
+        operationId = runner.data('operationId');
+        path = $(runner).find('input[name="urlpath"]').val();
+		testpath = 'run/' + testmethod + "/" + path + "/" + testconfig_pk  + "/"+ operationId   ;
 		$.post(testpath,  {
             'json_body': runner.find('textarea').val(),
             'csrfmiddlewaretoken': window.CSRF
