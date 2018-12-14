@@ -33,15 +33,6 @@ URLPATH_REPLACABLES = [
     'FROM_CURRENCY_CODE', 'TO_CURRENCY_CODE',
 ]
 
-DEFAULT_VALUES = [
-    '3.0.0','robert.xuk.x@example.com','robert.xuk.x@example.com','1',
-    'psd201-bank-x--uk','9cf8-1234','24a2-24242','6056-M35',
-    '05237266-b334-4704-a087-5b460a2ecf04',
-    '05237266-b334-4704-a087-5b460a2ecf04','1','b52a3465-d484-4b9a-97da-308188af7c6a','British Gas',
-    'bank-x281290865','1','1',
-    'GBP','GBP',
-]
-
 class IndexView(LoginRequiredMixin, TemplateView):
     """Index view for runtests"""
     template_name = "runtests/index.html"
