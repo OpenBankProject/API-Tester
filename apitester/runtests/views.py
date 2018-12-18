@@ -21,7 +21,6 @@ from obp.api import API, APIError
 from .forms import TestConfigurationForm
 from .models import TestConfiguration,ProfileOperation
 
-
 # TODO: These have to map to attributes of models.TestConfiguration
 URLPATH_REPLACABLES = [
     'API_VERSION',
