@@ -5,6 +5,7 @@ Views of runtests app
 
 import json
 import urllib
+import re
 
 from django.conf import settings
 from django.contrib import messages
@@ -20,7 +21,6 @@ from obp.api import API, APIError
 from .forms import TestConfigurationForm
 from .models import TestConfiguration,ProfileOperation
 
-
 # TODO: These have to map to attributes of models.TestConfiguration
 URLPATH_REPLACABLES = [
     'API_VERSION',
@@ -31,7 +31,6 @@ URLPATH_REPLACABLES = [
     'CUSTOMER_ID', 'MEETING_ID', 'CONSUMER_ID',
     'FROM_CURRENCY_CODE', 'TO_CURRENCY_CODE',
 ]
-
 
 class IndexView(LoginRequiredMixin, TemplateView):
     """Index view for runtests"""
@@ -128,6 +127,10 @@ class IndexView(LoginRequiredMixin, TemplateView):
 
         if 'selected' in testconfigs and testconfigs['selected']:
             api_version = testconfigs['selected'].api_version
+
+            if re.match("^[1-3]\.[0-9]\.[0-9]$", api_version) is None:
+                api_version = settings.API_VERSION
+
             try:
                 swagger = api.get_swagger(api_version)
             except APIError as err:
