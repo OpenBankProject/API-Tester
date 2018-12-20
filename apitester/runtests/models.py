@@ -195,4 +195,4 @@ class ProfileOperation(models.Model):
         verbose_name_plural = 'Test Profile Operation'
 
     def __str__(self):
-        return self.name
+        return "profile_id:\t{}\noperationid:\t{}\n".format(self.profile_id,self.operation_id)
