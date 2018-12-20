@@ -224,6 +224,28 @@ For `GatewayLogin` to work, the user's provider has to be set to `Gateway` in fi
 
 The app should tell you if your logged in user does not have the proper role to execute the management functionality you need. Please use a Super Admin user to login at an API Manager instance or API Explorer and set roles accordingly. To become Super Admin, set the property `super_admin_user_ids` in the API properties file accordingly.
 
+# Usage
+
+1) Login as the user that you will execute the tests as.
+
+2) Create a "profile". 
+
+Enter the API version (e.g. 3.1.0) that you want to test and values for commonly used fields. These values will be used as the defaults in urls and POST bodies but you can change the values for each URL.
+
+3) Save the profile. This will generate tests for every endpoint in the version you specified.
+
+4) Now you can change the URLs / POST bodies and Test each endpoint, all or the selected endpoints.
+
+Note: 
+
+You can change the order in which tests are run.
+
+A user can have multiple test profiles.
+
+
+
+Please submit an issue on GitHub if something bugs you! 
+
 
 
 # Final words
