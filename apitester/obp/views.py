@@ -11,6 +11,7 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.models import User
 from django.urls import reverse
 from django.views.generic import RedirectView, FormView
+from django.conf import settings
 
 from .api import API, APIError
 from .authenticator import AuthenticatorError
@@ -50,8 +51,8 @@ class OAuthInitiateView(RedirectView):
         Gets the callback URI to where the user shall be returned after
         initiation at OAuth server
         """
-        base_url = '{}://{}'.format(
-            request.scheme, request.environ['HTTP_HOST'])
+        #base_url = '{}://{}'.format(request.scheme, request.environ['HTTP_HOST'])
+        base_url =  settings.BASE_URL
         uri = base_url + reverse('oauth-authorize')
         if 'next' in request.GET:
             uri = '{}?next={}'.format(uri, request.GET['next'])
