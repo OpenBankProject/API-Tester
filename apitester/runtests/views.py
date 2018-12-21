@@ -152,7 +152,8 @@ class IndexView(LoginRequiredMixin, TemplateView):
                         call = self.get_post_or_update('delete', testconfigs, testconfig_pk, path, data, swagger)
                         calls.append(call)
 
-                calls = sorted(calls, key=lambda call: call['order'], reverse=True)
+                calls = sorted(calls, key=lambda item: item['order'], reverse=False)
+
         context.update({
             'calls': calls,
             'testconfigs': testconfigs,

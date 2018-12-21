@@ -148,10 +148,14 @@
                 </div>
                 <div class="col-xs-3">
                     {% if call.method == "post" or call.method == 'put' %}
-                    <textarea class="form-control" name="" id="" cols="30" rows="5">{{ call.params }}</textarea>
+                    <textarea class="form-control" name="" id="" cols="30" rows="5">
+						{{call.params}}
+					</textarea>
                     {% endif %}
                 </div>
-                <div class="col-xs-1"><input  class="form-control" type="text" name="order" size="1" value="{{  call.order }}" /></div>
+				<div class="col-xs-1"><input  class="form-control" type="text" name="order" size="1" value="{{  call.order  }}" /></div>
+                <div class="col-xs-1">{{ call.method |upper}}</div>
+
 				<div class="col-xs-2 col-sm-1">
 						<button class="btn btn-default forTest">Test</button>
                         <button class="btn btn-success forSave">Save</button><span style="display: none;margin-left: 5px;background-color:#00cc00">saved.</span>

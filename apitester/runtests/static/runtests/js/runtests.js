@@ -50,12 +50,14 @@ $(function() {
 		runTest(runner);
 	});
     $('.runner button.forSave').click(function() {
+
     	var t = $(this)
         var runner = $(this).parent().parent().parent();
         jsonBody = $(runner).find('textarea').val();
 		operationId = $(runner).find('input[type="hidden"]').val();
 		order = $(runner).find('input[name="order"]').val();
 		urlpath = $(runner).find('input[name="urlpath"]').val();
+
         $.post('/runtests/save/json_body', {
         	'json_body': jsonBody,
 			'operation_id': operationId,
@@ -66,6 +68,8 @@ $(function() {
 		}, function (response) {
         	t.next().show().fadeOut(1000);
         });
+
+        setTimeout("window.location.reload()",1000);
     });
 
 	$('#checkNone').click(function() {
