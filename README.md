@@ -59,10 +59,14 @@ $ psql
 exit
 ```
 
+There is also an example using sqlite, see 'configure settings'.
+
 
 ## Configure settings
 
 Create and edit `apitester/apitester/local_settings.py`:
+
+### Postgres Example
 
 ```python
 # Used internally by Django, can be anything of your choice
@@ -85,6 +89,28 @@ DATABASES = {
         'HOST': 'localhost',
         'PORT': '',
     }
+}
+```
+
+### Sqlite3 Example
+If you're using sqlite:
+
+```python
+import os                                                                        
+BASE_DIR = './'                                                                  
+# Used internally by Django, can be anything of your choice                      
+SECRET_KEY = '<random string>'                                                   
+# API hostname, e.g. https://api.openbankproject.com                             
+API_HOST = '127.0.0.1'                                                           
+# Consumer key + secret to authenticate the _app_ against the API                
+OAUTH_CONSUMER_KEY = '<key>'                                                     
+OAUTH_CONSUMER_SECRET = '<secret>'                                               
+# Database filename, default is `../db.sqlite3` relative to this file            
+DATABASES = {                                                                    
+    'default': {                                                                 
+        'ENGINE': 'django.db.backends.sqlite3',                                  
+        'NAME': os.path.join(BASE_DIR, '..', '..', 'db.sqlite3'),                
+    }                                                                            
 }
 ```
 
