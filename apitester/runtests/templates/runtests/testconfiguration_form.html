@@ -5,7 +5,7 @@
 
 {% block content %}
 <div id="runtests">
-	<h1>Edit test configuration</h1>
+	<h1>Edit test profile</h1>
 	<form action="" method="post">
 		{% csrf_token %}
 		{% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}

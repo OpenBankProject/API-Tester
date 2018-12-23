@@ -28,6 +28,7 @@ class TestConfiguration(models.Model):
         help_text='User who owns this configuration',
         blank=False,
         null=False,
+        on_delete=models.DO_NOTHING
     )
     username = models.CharField(
         max_length=255,
@@ -155,3 +156,55 @@ class TestConfiguration(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class ProfileOperation(models.Model):
+    profile_id = models.IntegerField(
+        verbose_name="Profile id",
+        help_text="Test Profile id"
+    )
+    operation_id = models.CharField(
+        max_length=255,
+        verbose_name="Operation id ",
+        help_text="Test endpoint opreation id",
+        blank=True,
+        null=True
+    )
+    json_body = models.TextField(
+        max_length=65535,
+        verbose_name="Json body",
+        help_text="The json body to the  test request",
+
+    )
+    order = models.IntegerField(
+        verbose_name="Order",
+        help_text="Test order",
+        default=100
+    )
+    urlpath = models.CharField(
+        max_length=255,
+        verbose_name="The url",
+        help_text="The url",
+        blank=True,
+        null=True,
+    )
+
+    replica_id = models.IntegerField(
+        verbose_name="Replica id",
+        help_text="Test Replica id",
+        default= 1
+    )
+
+    remark = models.CharField(
+        max_length=255,
+        verbose_name="remark",
+        help_text="remark",
+        blank=True,
+        null=True,
+    )
+    class Meta:
+        verbose_name = 'Test Profile Operation'
+        verbose_name_plural = 'Test Profile Operation'
+
+    def __str__(self):
+        return "profile_id:\t{}\noperationid:\t{}\n".format(self.profile_id,self.operation_id)

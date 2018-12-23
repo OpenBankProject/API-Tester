@@ -4,8 +4,16 @@ $(function() {
 	}
 
 	function runTest(runner) {
-		var testpath = runner.data('testpath');
-		$.get(testpath, function (data) {
+		//var testpath = runner.data('testpath');
+		testmethod = runner.data('testmethod');
+        testconfig_pk = runner.data('testconfig_pk');
+        operationId = runner.data('operationId');
+        path = $(runner).find('input[name="urlpath"]').val();
+		testpath = 'run/' + testmethod + "/" + path + "/" + testconfig_pk  + "/"+ operationId   ;
+		$.post(testpath,  {
+            'json_body': runner.find('textarea').val(),
+            'csrfmiddlewaretoken': window.CSRF
+        }, function (data) {
 			var alertType = 'success';
 			var msg = '';
 			var collapse = '';
@@ -36,11 +44,62 @@ $(function() {
 			}
 		}
 	});
-	$('.runner button').click(function() {
+	$('.runner button.forTest').click(function() {
 		var runner = $(this).parent().parent().parent();
 		$(runner).find('.result').empty();
 		runTest(runner);
 	});
+    $('.runner button.forSave').click(function() {
+    	var t = $(this)
+        var runner = $(this).parent().parent().parent();
+        jsonBody = $(runner).find('textarea[name="params"]').val();
+		operationId = $(runner).find('input[type="hidden"]').val();
+		order = $(runner).find('input[name="order"]').val();
+		urlpath = $(runner).find('input[name="urlpath"]').val();
+		replica_id = $(runner).find('input[name="replica_id"]').val();
+		remark = $(runner).find('textarea[name="remark"]').val();
+
+        $.post('/runtests/save/json_body', {
+        	'json_body': jsonBody,
+			'operation_id': operationId,
+			'profile_id' : window.CURRENT_PROFILE_ID,
+            'order': order,
+			'urlpath': urlpath,
+			'replica_id':replica_id,
+			'remark':remark,
+            'csrfmiddlewaretoken': window.CSRF
+		}, function (response) {
+        	t.next().show().fadeOut(1000);
+        });
+
+        setTimeout("window.location.reload(true)",1000);
+    });
+
+    $('.runner button.forCopy').click(function() {
+        var t = $(this)
+        var runner = $(this).parent().parent().parent();
+        jsonBody = $(runner).find('textarea[name="params"]').val();
+		operationId = $(runner).find('input[type="hidden"]').val();
+		order = $(runner).find('input[name="order"]').val();
+		urlpath = $(runner).find('input[name="urlpath"]').val();
+		replica_id = $(runner).find('input[name="replica_id"]').val();
+		remark = $(runner).find('textarea[name="remark"]').val();
+
+        $.post('/runtests/copy/json_body', {
+        	'json_body': jsonBody,
+			'operation_id': operationId,
+			'profile_id' : window.CURRENT_PROFILE_ID,
+            'order': order,
+			'urlpath': urlpath,
+			'replica_id':replica_id,
+			'remark':remark,
+            'csrfmiddlewaretoken': window.CSRF
+		}, function (response) {
+        	t.next().show().fadeOut(1000);
+        });
+
+        setTimeout("window.location.reload(true)",1000);
+    });
 
 	$('#checkNone').click(function() {
 		$('.runner').find('input').prop('checked', false);

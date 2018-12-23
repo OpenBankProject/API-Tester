@@ -11,7 +11,7 @@
 		<div class="row">
 			<div class="col-xs-12 col-sm-10">
 				<select id="select-testconfig" class="form-control">
-					<option value="">Select test configuration ...</option>
+					<option value="">Select test profile ...</option>
 					{% for config in testconfigs.available %}
 					<option value="{{ config.pk  }}">{{ config.name }}</option>
 					{% endfor %}
@@ -124,10 +124,10 @@
 				<button class="btn btn-primary form-control" id="run">Test selected</button>
 			</div>
 			<div class="col-xs-12 col-sm-2">
-				<button class="form-control" id="checkNone" />Uncheck all</button>
+				<button class="btn btn-default form-control" id="checkNone" />Uncheck all</button>
 			</div>
 			<div class="col-xs-12 col-sm-2">
-				<button class="form-control" id="checkAll" />Check all</button>
+				<button class="btn btn-default form-control" id="checkAll" />Check all</button>
 			</div>
 			<div class="col-xs-12 col-sm-4">
 			</div>
@@ -136,20 +136,34 @@
 
 	<ul class="hide" id="test-list">
 		{% for call in calls %}
-		<li class="runner" data-testpath="{% url 'runtests-run' testmethod=call.method testpath=call.urlpath|urlencode testconfig_pk=testconfig_pk %}">
-			<div class="row">
-				<div class="col-xs-9 col-sm-2">
-					<div class="checkbox">
-						<label><input type="checkbox" checked="checked" /> {{ call.summary }}</label>
-					</div>
-				</div>
-				<div class="col-xs-3 col-sm-1">
-						<button class="btn btn-secondary">Test</button>
-				</div>
-				<div class="col-xs-12 col-sm-9 result"></div>
-			</div>
-		</li>
-		{% endfor %}
+        <li class="runner" data-testpath="{% url 'runtests-run' testmethod=call.method testpath=call.urlpath|urlencode testconfig_pk=testconfig_pk operation_id=call.operationId %}">
+            <div class="row">
+                <div class="col-xs-5 col-sm-2">
+                    <div class="checkbox">
+                        <label><input type="checkbox" checked="checked" /> <textarea class="form-control" name="remark" cols="20" rows="5">{{call.summary}}</textarea></label><input type="hidden" value="{{  call.operationId }}">
+                    </div>
+                </div>
+                <div class="col-xs-5">
+                    <input class="form-control" type="text" name="urlpath" size="50" value="{{ call.urlpath }}">
+                </div>
+                <div class="col-xs-3">
+                    {% if call.method == "post" or call.method == 'put' %}
+                    <!--<textarea class="form-control" name="" id="" cols="30" rows="5">{% for key, value in call.params.items %}{{key}}:{{value}}{% endfor %}</textarea>-->
+                    <textarea class="form-control" name="params" id="" cols="20" rows="5">{{call.params}}</textarea>
+                    {% endif %}
+                </div>
+                <div class="col-xs-1"><input  class="form-control" type="text" name="order" size="1" value="{{  call.order  }}" /></div>
+                <div class="col-xs-1"><input  class="form-control" type="hidden" name="replica_id" size="1" value="{{  call.replica_id  }}" /></div>
+                <div class="col-xs-1">{{ call.method |upper}}</div>
+                <div class="col-xs-2 col-sm-1">
+                    <button class="btn btn-default forTest" id="forTest">Test</button>
+                    <button class="btn btn-default forCopy" id="forCopy">Copy</button>
+                    <button class="btn btn-success forSave" id="forSave">Save</button><span style="display: none;margin-left: 5px;background-color:#00cc00">saved.</span>
+                </div>
+                <div class="col-xs-12 col-sm-9 result"></div>
+            </div>
+        </li>
+        {% endfor %}
 	</ul>
 </div>
 {% endblock content %}
@@ -160,6 +174,8 @@
 	<script type="text/javascript" src="{% static 'runtests/js/runtests.js' %}"></script>
 	<script type="text/javascript">
 		URL_RUNTESTS_INDEX = "{% url 'runtests-index' %}";
+		CURRENT_PROFILE_ID = "{{  testconfigs.selected.pk }}"
+        CSRF = "{{ csrf_token }}"
 	</script>
 {% endblock extrajs %}
 
