@@ -202,6 +202,14 @@ class ProfileOperation(models.Model):
         blank=True,
         null=True,
     )
+
+    is_deleted = models.IntegerField(
+        verbose_name="Deleted",
+        help_text="Deleted",
+        default=0,
+        null=False
+    )
+
     class Meta:
         verbose_name = 'Test Profile Operation'
         verbose_name_plural = 'Test Profile Operation'

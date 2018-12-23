@@ -71,7 +71,8 @@ class IndexView(LoginRequiredMixin, TemplateView):
         try:
             objs = ProfileOperation.objects.filter(
                 profile_id=testconfig_pk,
-                operation_id=data[method]['operationId']
+                operation_id=data[method]['operationId'],
+                is_deleted=0
             )
         except ProfileOperation.DoesNotExist:
             objs = None
@@ -239,7 +240,8 @@ class RunView(LoginRequiredMixin, TemplateView):
         try:
             obj = ProfileOperation.objects.get(
                 profile_id=testconfig_pk,
-                operation_id=operation_id
+                operation_id=operation_id,
+                is_deleted=0
             )
         except ProfileOperation.DoesNotExist:
             obj = None
@@ -437,3 +439,18 @@ def copyJsonBody(request):
 
     return JsonResponse({'state': True})
 
+def deleteJsonBody(request):
+    saveJsonBody(request)
+
+    operation_id = request.POST.get('operation_id')
+    profile_id = request.POST.get('profile_id')
+    replica_id = request.POST.get('replica_id')
+
+    profile = ProfileOperation.objects.get(
+        operation_id=operation_id,
+        profile_id=profile_id,
+        replica_id=replica_id
+    )
+    profile.is_deleted = 1
+    profile.save()
+    return JsonResponse({'state': True})
