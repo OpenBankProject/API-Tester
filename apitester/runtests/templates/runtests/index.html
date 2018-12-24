@@ -145,6 +145,7 @@
                 </div>
                 <div class="col-xs-5">
                     <input class="form-control" type="text" name="urlpath" size="50" value="{{ call.urlpath }}">
+					<input  class="form-control" type="hidden" name="testconfig_pk" size="1" value="{{  testconfig_pk  }}" />
                 </div>
                 <div class="col-xs-3">
                     {% if call.method == "post" or call.method == 'put' %}
@@ -152,9 +153,10 @@
                     <textarea class="form-control" name="params" id="" cols="20" rows="5">{{call.params}}</textarea>
                     {% endif %}
                 </div>
-                <div class="col-xs-1"><input  class="form-control" type="text" name="order" size="1" value="{{  call.order  }}" /></div>
+                <div class="col-xs-1">order: <input  class="form-control" type="text" name="order" size="1" value="{{  call.order  }}" /></div>
+                <div class="col-xs-1">runs num: <input  class="form-control" type="text" name="numRun" size="1" value=1 /></div>
                 <div class="col-xs-1"><input  class="form-control" type="hidden" name="replica_id" size="1" value="{{  call.replica_id  }}" /></div>
-                <div class="col-xs-1">{{ call.method |upper}}</div>
+                <div class="col-xs-1">{{ call.method |upper}}<input  class="form-control" type="hidden" name="method" size="1" value="{{  call.method  }}" /></div>
                 <div class="col-xs-1 col-sm-1">
                     <button class="btn btn-default forTest" id="forTest">Test</button>
                     <button class="btn btn-default forCopy" id="forCopy">Copy</button>

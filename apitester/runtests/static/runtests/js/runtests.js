@@ -5,12 +5,17 @@ $(function() {
 
 	function runTest(runner) {
 		//var testpath = runner.data('testpath');
-		testmethod = runner.data('testmethod');
-        testconfig_pk = runner.data('testconfig_pk');
-        operationId = runner.data('operationId');
+		jsonBody = $(runner).find('textarea[name="params"]').val();
+		operationId = $(runner).find('input[type="hidden"]').val();
+		order = $(runner).find('input[name="order"]').val();
+		replica_id = $(runner).find('input[name="replica_id"]').val();
+		remark = $(runner).find('textarea[name="remark"]').val();
+		testmethod = $(runner).find('input[name="method"]').val();
+        testconfig_pk = $(runner).find('input[name="testconfig_pk"]').val();
         path = $(runner).find('input[name="urlpath"]').val();
 		testpath = 'run/' + testmethod + "/" + path + "/" + testconfig_pk  + "/"+ operationId   ;
 		$.post(testpath,  {
+		    'num_runs':$(runner).find('input[name="numRun"]').val(),
             'json_body': runner.find('textarea').val(),
             'csrfmiddlewaretoken': window.CSRF
         }, function (data) {

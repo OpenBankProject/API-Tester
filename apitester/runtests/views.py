@@ -6,7 +6,7 @@ Views of runtests app
 import json
 import urllib
 import re
-
+import time
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -17,10 +17,11 @@ from django.views.generic import TemplateView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
 from obp.api import API, APIError
-
+import logging
 from .forms import TestConfigurationForm
 from .models import TestConfiguration,ProfileOperation
 
+LOGGER = logging.getLogger(__name__)
 # TODO: These have to map to attributes of models.TestConfiguration
 URLPATH_DEFAULT = [
     '3.1.0',
@@ -256,7 +257,8 @@ class RunView(LoginRequiredMixin, TemplateView):
             'urlpath': urlpath if obj is None else obj.urlpath,
             'operation_id': operation_id,
             'profile_id': testconfig_pk,
-            'payload': self.request.POST.get('json_body')
+            'payload': self.request.POST.get('json_body'),
+            'num_runs': self.request.POST.get('num_runs')
         }
         try:
             testconfig = TestConfiguration.objects.get(
@@ -314,13 +316,19 @@ class RunView(LoginRequiredMixin, TemplateView):
             'messages': [],
             'success': False,
         })
+
+        num_runs = int(config['num_runs'])
+
         if not config['found']:
             msg = 'Unknown path {}!'.format(kwargs['testpath'])
             context['messages'].append(msg)
             return context
 
         try:
-            result = self.run_test(config)
+            for i in range(num_runs):
+                result = self.run_test(config)
+                LOGGER.log(logging.INFO,result)
+                time.sleep(t)
         except APIError as err:
             context['messages'].append(err)
             return context
