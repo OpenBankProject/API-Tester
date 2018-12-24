@@ -139,10 +139,12 @@ class IndexView(LoginRequiredMixin, TemplateView):
         where placeholders in given path are replaced by values from testconfig
         """
         urlpath = path
-        for match in URLPATH_REPLACABLES:
+        for (index, match) in enumerate(URLPATH_REPLACABLES):
             value = getattr(testconfig, match.lower())
             if value:
                 urlpath = self.api_replace(urlpath, match, value)
+            else:
+                urlpath = self.api_replace(urlpath, match, URLPATH_DEFAULT[index])
         return urlpath
 
     def get_context_data(self, **kwargs):
