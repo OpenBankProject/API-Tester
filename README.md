@@ -59,10 +59,14 @@ $ psql
 exit
 ```
 
+There is also an example using sqlite, see 'configure settings'.
+
 
 ## Configure settings
 
 Create and edit `apitester/apitester/local_settings.py`:
+
+### Postgres Example
 
 ```python
 # Used internally by Django, can be anything of your choice
@@ -85,6 +89,28 @@ DATABASES = {
         'HOST': 'localhost',
         'PORT': '',
     }
+}
+```
+
+### Sqlite3 Example
+If you're using sqlite:
+
+```python
+import os                                                                        
+BASE_DIR = './'                                                                  
+# Used internally by Django, can be anything of your choice                      
+SECRET_KEY = '<random string>'                                                   
+# API hostname, e.g. https://api.openbankproject.com                             
+API_HOST = '127.0.0.1'                                                           
+# Consumer key + secret to authenticate the _app_ against the API                
+OAUTH_CONSUMER_KEY = '<key>'                                                     
+OAUTH_CONSUMER_SECRET = '<secret>'                                               
+# Database filename, default is `../db.sqlite3` relative to this file            
+DATABASES = {                                                                    
+    'default': {                                                                 
+        'ENGINE': 'django.db.backends.sqlite3',                                  
+        'NAME': os.path.join(BASE_DIR, '..', '..', 'db.sqlite3'),                
+    }                                                                            
 }
 ```
 
@@ -223,6 +249,28 @@ For `GatewayLogin` to work, the user's provider has to be set to `Gateway` in fi
 # Management
 
 The app should tell you if your logged in user does not have the proper role to execute the management functionality you need. Please use a Super Admin user to login at an API Manager instance or API Explorer and set roles accordingly. To become Super Admin, set the property `super_admin_user_ids` in the API properties file accordingly.
+
+# Usage
+
+1) Login as the user that you will execute the tests as.
+
+2) Create a "profile". 
+
+Enter the API version (e.g. 3.1.0) that you want to test and values for commonly used fields. These values will be used as the defaults in urls and POST bodies but you can change the values for each URL.
+
+3) Save the profile. This will generate tests for every endpoint in the version you specified.
+
+4) Now you can change the URLs / POST bodies and Test each endpoint, all or the selected endpoints.
+
+Note: 
+
+You can change the order in which tests are run.
+
+A user can have multiple test profiles.
+
+
+
+Please submit an issue on GitHub if something bugs you! 
 
 
 

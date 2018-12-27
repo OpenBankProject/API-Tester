@@ -7,6 +7,7 @@ import json
 import urllib
 import re
 import time
+
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -99,12 +100,12 @@ class IndexView(LoginRequiredMixin, TemplateView):
                     'responseCode': 200,
                 })
             return objs_list
+
         elif method == 'post' or method == 'put':
             # generate json body from swagger
             definition = data[method]['parameters'][0] if len(data[method]['parameters']) > 0 else None
             definition = definition['schema']['$ref'][14:]
             params = swagger['definitions'][definition]
-
             if len(params["required"]) > 0:
                 for field in params["required"]:
                     # Match Profile variables
@@ -126,7 +127,6 @@ class IndexView(LoginRequiredMixin, TemplateView):
             'responseCode': 200,
         }]
 
-
     def api_replace(self, string, match, value):
         """Helper to replace format strings from the API"""
         # API sometimes uses '{match}' or 'match' to denote variables
@@ -146,6 +146,7 @@ class IndexView(LoginRequiredMixin, TemplateView):
                 urlpath = self.api_replace(urlpath, match, value)
             else:
                 urlpath = self.api_replace(urlpath, match, URLPATH_DEFAULT[index])
+
         return urlpath
 
     def get_context_data(self, **kwargs):
@@ -250,7 +251,7 @@ class RunView(LoginRequiredMixin, TemplateView):
             obj = None
 
         config = {
-            'found': False,
+            'found': True,
             'method': testmethod,
             'status_code': status_code,
             'summary': 'Unknown',
@@ -463,4 +464,5 @@ def deleteJsonBody(request):
     )
     profile.is_deleted = 1
     profile.save()
+
     return JsonResponse({'state': True})

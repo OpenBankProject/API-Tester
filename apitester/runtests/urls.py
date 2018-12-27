@@ -14,6 +14,7 @@ from .views import (
     saveJsonBody,
     copyJsonBody, deleteJsonBody)
 
+
 urlpatterns = [
     url(r'^$',
         IndexView.as_view(),
@@ -39,4 +40,5 @@ urlpatterns = [
         name='runtests-copy-json_body'),
     url(r'delete/json_body', deleteJsonBody,
         name='runtests-delete-json_body'),
+
 ]
