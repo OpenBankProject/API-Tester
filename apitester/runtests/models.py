@@ -168,8 +168,7 @@ class ProfileOperation(models.Model):
         verbose_name="Operation id ",
         help_text="Test endpoint opreation id",
         blank=True,
-        null=True,
-        unique=True,
+        null=True
     )
     json_body = models.TextField(
         max_length=65535,
@@ -180,7 +179,7 @@ class ProfileOperation(models.Model):
     order = models.IntegerField(
         verbose_name="Order",
         help_text="Test order",
-        default=0
+        default=100
     )
     urlpath = models.CharField(
         max_length=255,
@@ -188,6 +187,27 @@ class ProfileOperation(models.Model):
         help_text="The url",
         blank=True,
         null=True,
+    )
+
+    replica_id = models.IntegerField(
+        verbose_name="Replica id",
+        help_text="Test Replica id",
+        default= 1
+    )
+
+    remark = models.CharField(
+        max_length=255,
+        verbose_name="remark",
+        help_text="remark",
+        blank=True,
+        null=True,
+    )
+
+    is_deleted = models.IntegerField(
+        verbose_name="Deleted",
+        help_text="Deleted",
+        default=0,
+        null=False
     )
 
     class Meta:

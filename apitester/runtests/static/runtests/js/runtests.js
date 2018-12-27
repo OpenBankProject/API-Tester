@@ -5,12 +5,18 @@ $(function() {
 
 	function runTest(runner) {
 		//var testpath = runner.data('testpath');
-		testmethod = runner.data('testmethod');
-        testconfig_pk = runner.data('testconfig_pk');
-        operationId = runner.data('operationId');
+
+		jsonBody = $(runner).find('textarea[name="params"]').val();
+		operationId = $(runner).find('input[type="hidden"]').val();
+		order = $(runner).find('input[name="order"]').val();
+		replica_id = $(runner).find('input[name="replica_id"]').val();
+		remark = $(runner).find('textarea[name="remark"]').val();
+		testmethod = $(runner).find('input[name="method"]').val();
+        testconfig_pk = $(runner).find('input[name="testconfig_pk"]').val();
         path = $(runner).find('input[name="urlpath"]').val();
 		testpath = 'run/' + testmethod + "/" + path + "/" + testconfig_pk  + "/"+ operationId   ;
 		$.post(testpath,  {
+		    'num_runs':$(runner).find('input[name="numRun"]').val(),
             'json_body': runner.find('textarea').val(),
             'csrfmiddlewaretoken': window.CSRF
         }, function (data) {
@@ -50,13 +56,14 @@ $(function() {
 		runTest(runner);
 	});
     $('.runner button.forSave').click(function() {
-
     	var t = $(this)
         var runner = $(this).parent().parent().parent();
-        jsonBody = $(runner).find('textarea').val();
+        jsonBody = $(runner).find('textarea[name="params"]').val();
 		operationId = $(runner).find('input[type="hidden"]').val();
 		order = $(runner).find('input[name="order"]').val();
 		urlpath = $(runner).find('input[name="urlpath"]').val();
+		replica_id = $(runner).find('input[name="replica_id"]').val();
+		remark = $(runner).find('textarea[name="remark"]').val();
 
         $.post('/runtests/save/json_body', {
         	'json_body': jsonBody,
@@ -64,12 +71,66 @@ $(function() {
 			'profile_id' : window.CURRENT_PROFILE_ID,
             'order': order,
 			'urlpath': urlpath,
+			'replica_id':replica_id,
+			'remark':remark,
             'csrfmiddlewaretoken': window.CSRF
 		}, function (response) {
         	t.next().show().fadeOut(1000);
         });
 
-        setTimeout("window.location.reload()",1000);
+        setTimeout("window.location.reload(true)",1000);
+    });
+
+    $('.runner button.forCopy').click(function() {
+        var t = $(this)
+        var runner = $(this).parent().parent().parent();
+        jsonBody = $(runner).find('textarea[name="params"]').val();
+		operationId = $(runner).find('input[type="hidden"]').val();
+		order = $(runner).find('input[name="order"]').val();
+		urlpath = $(runner).find('input[name="urlpath"]').val();
+		replica_id = $(runner).find('input[name="replica_id"]').val();
+		remark = $(runner).find('textarea[name="remark"]').val();
+
+        $.post('/runtests/copy/json_body', {
+        	'json_body': jsonBody,
+			'operation_id': operationId,
+			'profile_id' : window.CURRENT_PROFILE_ID,
+            'order': order,
+			'urlpath': urlpath,
+			'replica_id':replica_id,
+			'remark':remark,
+            'csrfmiddlewaretoken': window.CSRF
+		}, function (response) {
+        	t.next().show().fadeOut(1000);
+        });
+
+        setTimeout("window.location.reload(true)",1000);
+    });
+
+    $('.runner button.forDelete').click(function() {
+        var t = $(this)
+        var runner = $(this).parent().parent().parent();
+        jsonBody = $(runner).find('textarea[name="params"]').val();
+        operationId = $(runner).find('input[type="hidden"]').val();
+        order = $(runner).find('input[name="order"]').val();
+        urlpath = $(runner).find('input[name="urlpath"]').val();
+        replica_id = $(runner).find('input[name="replica_id"]').val();
+        remark = $(runner).find('textarea[name="remark"]').val();
+
+        $.post('/runtests/delete/json_body', {
+        	'json_body': jsonBody,
+          'operation_id': operationId,
+          'profile_id' : window.CURRENT_PROFILE_ID,
+            'order': order,
+          'urlpath': urlpath,
+          'replica_id':replica_id,
+          'remark':remark,
+          'csrfmiddlewaretoken': window.CSRF
+		}, function (response) {
+        	t.next().show().fadeOut(1000);
+        });
+        setTimeout("window.location.reload(true)",1000);
+
     });
 
 	$('#checkNone').click(function() {

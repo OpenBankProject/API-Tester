@@ -11,8 +11,9 @@ from .views import (
     TestConfigurationCreateView,
     TestConfigurationUpdateView,
     TestConfigurationDeleteView,
-    saveJsonBody
-)
+    saveJsonBody,
+    copyJsonBody, deleteJsonBody)
+
 
 urlpatterns = [
     url(r'^$',
@@ -35,4 +36,9 @@ urlpatterns = [
         name='runtests-testconfig-delete'),
     url(r'save/json_body', saveJsonBody,
         name='runtests-save-json_body'),
+    url(r'copy/json_body', copyJsonBody,
+        name='runtests-copy-json_body'),
+    url(r'delete/json_body', deleteJsonBody,
+        name='runtests-delete-json_body'),
+
 ]

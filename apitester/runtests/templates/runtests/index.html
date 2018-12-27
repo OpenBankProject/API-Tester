@@ -136,34 +136,40 @@
 
 	<ul class="hide" id="test-list">
 		{% for call in calls %}
-		<li class="runner" data-testpath="{% url 'runtests-run' testmethod=call.method testpath=call.urlpath|urlencode testconfig_pk=testconfig_pk operation_id=call.operationId %}" data-testmethod="{{ call.method }}" data-testconfig_pk="{{ testconfig_pk }}" data-operation_id="{{ call.operationId }}">
-			<div class="row">
-				<div class="col-xs-5 col-sm-2">
-					<div class="checkbox">
-						<label><input type="checkbox" checked="checked" /> {{ call.summary }}</label><input type="hidden" value="{{  call.operationId }}">
-					</div>
-				</div>
-                <div class="col-xs-4">
-                   <span> {{ call.method |upper}} </span> <input style="display: inline-block;width:85%"  class="form-control" type="text" name="urlpath"  value="{{ call.urlpath }}">
+        <li class="runner" data-testpath="{% url 'runtests-run' testmethod=call.method testpath=call.urlpath|urlencode testconfig_pk=testconfig_pk operation_id=call.operationId %}">
+            <div class="row">
+                <div class="col-xs-5 col-sm-2">
+                    <div class="checkbox">
+                        <label><input type="checkbox" checked="checked" /> <textarea class="form-control" name="remark" cols="20" rows="5">{{call.summary}}</textarea></label><input type="hidden" value="{{  call.operationId }}">
+                    </div>
+                </div>
+                <div class="col-xs-5">
+                    <input class="form-control" type="text" name="urlpath" size="50" value="{{ call.urlpath }}">
+					<input  class="form-control" type="hidden" name="testconfig_pk" size="1" value="{{  testconfig_pk  }}" />
                 </div>
                 <div class="col-xs-3">
                     {% if call.method == "post" or call.method == 'put' %}
-                    <textarea class="form-control" name="" id="" cols="30" rows="5">
-						{{call.params}}
-					</textarea>
+                    <!--<textarea class="form-control" name="" id="" cols="30" rows="5">{% for key, value in call.params.items %}{{key}}:{{value}}{% endfor %}</textarea>-->
+                    <textarea class="form-control" name="params" id="" cols="20" rows="5">{{call.params}}</textarea>
                     {% endif %}
                 </div>
-				<div class="col-xs-1"><input  class="form-control" type="text" name="order" size="1" value="{{  call.order  }}" /></div>
-                <div class="col-xs-1">{{ call.method |upper}}</div>
+                <div class="col-xs-1">order: <input  class="form-control" type="text" name="order" size="1" value="{{  call.order  }}" /></div>
+                <div class="col-xs-1">runs num: <input  class="form-control" type="text" name="numRun" size="1" value=1 /></div>
+                <div class="col-xs-1"><input  class="form-control" type="hidden" name="replica_id" size="1" value="{{  call.replica_id  }}" /></div>
+                <div class="col-xs-1">{{ call.method |upper}}<input  class="form-control" type="hidden" name="method" size="1" value="{{  call.method  }}" /></div>
+                <div class="col-xs-1 col-sm-1">
+                    <button class="btn btn-default forTest" id="forTest">Test</button>
+                    <button class="btn btn-default forCopy" id="forCopy">Copy</button>
+                </div>
+				<div class="col-xs-1 col-sm-1">
+                    <button class="btn btn-success forDelete" id="forDelete">Delete</button>
+                    <button class="btn btn-success forSave" id="forSave">Save</button><span style="display: none;margin-left: 5px;background-color:#00cc00">saved.</span>
 
-				<div class="col-xs-2 col-sm-1">
-						<button class="btn btn-default forTest">Test</button>
-                        <button class="btn btn-success forSave">Save</button><span style="display: none;margin-left: 5px;background-color:#00cc00">saved.</span>
 				</div>
-				<div class="col-xs-12 col-sm-9 result"></div>
-			</div>
-		</li>
-		{% endfor %}
+                <div class="col-xs-12 col-sm-9 result"></div>
+            </div>
+        </li>
+        {% endfor %}
 	</ul>
 </div>
 {% endblock content %}
