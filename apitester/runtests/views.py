@@ -329,7 +329,6 @@ class RunView(LoginRequiredMixin, TemplateView):
             for i in range(num_runs):
                 result = self.run_test(config)
                 LOGGER.log(logging.INFO,result)
-                time.sleep(t)
         except APIError as err:
             context['messages'].append(err)
             return context
