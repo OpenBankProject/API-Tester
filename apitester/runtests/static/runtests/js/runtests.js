@@ -5,7 +5,6 @@ $(function() {
 
 	function runTest(runner) {
 		//var testpath = runner.data('testpath');
-
 		jsonBody = $(runner).find('textarea[name="params"]').val();
 		operationId = $(runner).find('input[type="hidden"]').val();
 		order = $(runner).find('input[name="order"]').val();
@@ -77,13 +76,12 @@ $(function() {
 		}, function (response) {
         	t.next().show().fadeOut(1000);
         });
-
-        setTimeout("window.location.reload(true)",1000);
     });
 
     $('.runner button.forCopy').click(function() {
         var t = $(this)
         var runner = $(this).parent().parent().parent();
+        var item_list = $(runner).parent();
         jsonBody = $(runner).find('textarea[name="params"]').val();
 		operationId = $(runner).find('input[type="hidden"]').val();
 		order = $(runner).find('input[name="order"]').val();
@@ -101,15 +99,14 @@ $(function() {
 			'remark':remark,
             'csrfmiddlewaretoken': window.CSRF
 		}, function (response) {
-        	t.next().show().fadeOut(1000);
+		    $(item_list).clone().appendTo($(item_list));
         });
-
-        setTimeout("window.location.reload(true)",1000);
     });
 
     $('.runner button.forDelete').click(function() {
         var t = $(this)
         var runner = $(this).parent().parent().parent();
+        var item_list = $(runner).parent();
         jsonBody = $(runner).find('textarea[name="params"]').val();
         operationId = $(runner).find('input[type="hidden"]').val();
         order = $(runner).find('input[name="order"]').val();
@@ -127,11 +124,9 @@ $(function() {
           'remark':remark,
           'csrfmiddlewaretoken': window.CSRF
 		}, function (response) {
-        	t.next().show().fadeOut(1000);
-        });
-        setTimeout("window.location.reload(true)",1000);
-
-    });
+        	$(item_list).remove();
+        });    
+	});
 
 	$('#checkNone').click(function() {
 		$('.runner').find('input').prop('checked', false);
