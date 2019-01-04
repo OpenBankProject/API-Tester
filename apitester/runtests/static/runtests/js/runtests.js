@@ -125,7 +125,8 @@ $(function() {
           'csrfmiddlewaretoken': window.CSRF
 		}, function (response) {
         	$(item_list).remove();
-        });    });
+        });    
+	});
 
 	$('#checkNone').click(function() {
 		$('.runner').find('input').prop('checked', false);
