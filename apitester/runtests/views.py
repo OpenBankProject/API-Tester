@@ -113,7 +113,10 @@ class IndexView(LoginRequiredMixin, TemplateView):
                     if field in field_names:
                         request_body[field] = getattr(testconfigs["selected"], field)
                     else:
-                        request_body[field] = params["properties"][field].get("example", "")
+                        try:
+                            request_body[field] = params["properties"][field].get("example", "")
+                        except:
+                            request_body[field] = None
             params = json.dumps(request_body, indent=4)
 
         return [{
@@ -329,7 +332,6 @@ class RunView(LoginRequiredMixin, TemplateView):
             for i in range(num_runs):
                 result = self.run_test(config)
                 LOGGER.log(logging.INFO,result)
-                time.sleep(t)
         except APIError as err:
             context['messages'].append(err)
             return context
