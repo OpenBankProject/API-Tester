@@ -7,6 +7,6 @@ class NewTestConfigurationTestCase(TestCase):
     '''
     def test_create_test_configuration(self):
         test_config = TestConfiguration(owner_id=1, name='Fred', 
-                                        api_version='3.0.1')
+                                        api_version='3.1.0')
         test_config.save()
         return test_config
