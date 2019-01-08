@@ -15,8 +15,7 @@ $(function() {
         path = $(runner).find('input[name="urlpath"]').val();
 		testpath = 'run/' + testmethod + "/" + path + "/" + testconfig_pk  + "/"+ operationId   ;
 		$.post(testpath,  {
-		    'num_runs':$(runner).find('input[name="numRun"]').val(),
-            'json_body': runner.find('textarea').val(),
+            'json_body': jsonBody,
             'csrfmiddlewaretoken': window.CSRF
         }, function (data) {
 			var alertType = 'success';
