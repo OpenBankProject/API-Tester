@@ -261,8 +261,7 @@ class RunView(LoginRequiredMixin, TemplateView):
             'urlpath': urlpath if obj is None else obj.urlpath,
             'operation_id': operation_id,
             'profile_id': testconfig_pk,
-            'payload': self.request.POST.get('json_body'),
-            'num_runs': self.request.POST.get('num_runs')
+            'payload': self.request.POST.get('json_body')
         }
         try:
             testconfig = TestConfiguration.objects.get(
@@ -295,7 +294,10 @@ class RunView(LoginRequiredMixin, TemplateView):
         if config['method'] == 'get' or config['method'] == 'delete':
             response = self.api.call(config['method'], url)
         else:
-            response = self.api.call(config['method'], url, json.loads(config['payload']))
+            try:
+                response = self.api.call(config['method'], url, json.loads(config['payload']))
+            except:
+                response = self.api.call(config['method'], url)
         try:
             text = response.json()
         except json.decoder.JSONDecodeError as err:
