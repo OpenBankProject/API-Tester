@@ -49,11 +49,13 @@ $(function() {
 			}
 		}
 	});
+
 	$('.runner button.forTest').click(function() {
 		var runner = $(this).parent().parent().parent();
 		$(runner).find('.result').empty();
 		runTest(runner);
 	});
+
     $('.runner button.forSave').click(function() {
     	var t = $(this)
         var runner = $(this).parent().parent().parent();
@@ -131,6 +133,7 @@ $(function() {
 	$('#checkNone').click(function() {
 		$('.runner').find('input').prop('checked', false);
 	});
+
 	$('#checkAll').click(function() {
 		$('.runner').find('input').prop('checked', true);
 	});

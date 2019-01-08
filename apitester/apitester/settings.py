@@ -210,4 +210,4 @@ if not OAUTH_CONSUMER_SECRET:
 
 # Settings here might use parts overwritten in local settings
 API_ROOT = API_HOST + API_BASE_PATH + API_VERSION
-BASE_URL='http://127.0.0.1:8000'
+OAUTH_BASE_URL='http://127.0.0.1:8000'

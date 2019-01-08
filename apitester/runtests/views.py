@@ -321,17 +321,13 @@ class RunView(LoginRequiredMixin, TemplateView):
             'success': False,
         })
 
-        num_runs = int(config['num_runs'])
-
         if not config['found']:
             msg = 'Unknown path {}!'.format(kwargs['testpath'])
             context['messages'].append(msg)
             return context
 
         try:
-            for i in range(num_runs):
-                result = self.run_test(config)
-                LOGGER.log(logging.INFO,result)
+            result = self.run_test(config)
         except APIError as err:
             context['messages'].append(err)
             return context
