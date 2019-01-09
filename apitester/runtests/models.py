@@ -11,6 +11,7 @@ class TestConfiguration(models.Model):
     name = models.CharField(
         max_length=255,
         verbose_name='Name',
+        unique=True,
         help_text='Name of the configuration',
         blank=False,
         null=False,
