@@ -101,7 +101,7 @@ BASE_DIR = './'
 # Used internally by Django, can be anything of your choice                      
 SECRET_KEY = '<random string>'                                                   
 # API hostname, e.g. https://api.openbankproject.com                             
-API_HOST = '127.0.0.1'                                                           
+API_HOST = 'http://127.0.0.1:8080'                                                           
 # Consumer key + secret to authenticate the _app_ against the API                
 OAUTH_CONSUMER_KEY = '<key>'                                                     
 OAUTH_CONSUMER_SECRET = '<secret>'                                               
@@ -112,6 +112,9 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, '..', '..', 'db.sqlite3'),                
     }                                                                            
 }
+#API Tester URL
+OAUTH_BASE_URL='http://127.0.0.1:8000'
+
 ```
 
 
