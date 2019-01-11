@@ -12,4 +12,15 @@ from .views import (
     LogoutView,
 )
 
-urlpatterns = []
+urlpatterns = [
+    url(r'^oauth/initiate$',
+        OAuthInitiateView.as_view(), name='obp-oauth-initiate'),
+    url(r'^oauth/authorize$',
+        OAuthAuthorizeView.as_view(), name='obp-oauth-authorize'),
+    url(r'^directlogin$',
+        DirectLoginView.as_view(), name='obp-directlogin'),
+    url(r'^gatewaylogin$',
+        GatewayLoginView.as_view(), name='obp-gatewaylogin'),
+    url(r'^logout$',
+        LogoutView.as_view(), name='obp-oauth-logout'),
+]

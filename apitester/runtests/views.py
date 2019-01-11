@@ -258,7 +258,7 @@ class RunView(LoginRequiredMixin, TemplateView):
             'method': testmethod,
             'status_code': status_code,
             'summary': 'Unknown',
-            'urlpath': urlpath if objs is None else objs[0].urlpath,
+            'urlpath': urlpath if objs is None or len(objs)==0 else objs[0].urlpath,
             'operation_id': operation_id,
             'profile_id': testconfig_pk,
             'payload': self.request.POST.get('json_body')

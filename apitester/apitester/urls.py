@@ -38,6 +38,6 @@ urlpatterns = [
         GatewayLoginView.as_view(), name='gatewaylogin'),
     url(r'^logout$',
         LogoutView.as_view(), name='oauth-logout'),
-    #url(r'^obp/', include('obp.urls')),
+    url(r'^obp/', include('obp.urls')),
     url(r'^runtests/', include('runtests.urls')),
 ]
