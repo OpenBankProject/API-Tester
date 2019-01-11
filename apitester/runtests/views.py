@@ -314,7 +314,13 @@ class RunView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super(RunView, self).get_context_data(**kwargs)
         self.api = API(self.request.session.get('obp'))
+        payload = self.request.POST.get('json_body')
         config = self.get_config(**kwargs)
+
+        if context['testpath'] is not None:
+            config.update({'urlpath': context['testpath']})
+        if payload is not None:
+            config.update({'payload':payload})
         context.update({
             'config': config,
             'text': None,
@@ -322,7 +328,6 @@ class RunView(LoginRequiredMixin, TemplateView):
             'messages': [],
             'success': False,
         })
-
         if not config['found']:
             msg = 'Unknown path {}!'.format(kwargs['testpath'])
             context['messages'].append(msg)

@@ -12,6 +12,22 @@ from .views import (
     LogoutView,
 )
 
+from django.conf import settings
+import logging
+
+LOGGER = logging.getLogger(__name__)
+
+def LogAtStart():
+    LOGGER.log(logging.INFO, 'OAUTH_BASE_URL: {}'.format(
+        settings.OAUTH_BASE_URL))
+
+    LOGGER.log(logging.INFO, 'API_HOST: {}'.format(
+        settings.API_HOST))
+
+    LOGGER.log(logging.INFO, 'API_ROOT: {}'.format(
+        settings.API_ROOT))
+
+LogAtStart()
 
 urlpatterns = [
     url(r'^oauth/initiate$',
