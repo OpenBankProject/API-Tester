@@ -136,7 +136,10 @@ class API(object):
         elif response.status_code in [204]:
             return response.text
         else:
-            data = response.json()
+            try:
+                data = response.json()
+            except:
+                data = ""
             if 'error' in data:
                 self.handle_response_error(prefix, data['error'])
             return data
