@@ -245,20 +245,20 @@ class RunView(LoginRequiredMixin, TemplateView):
             status_code = 204
 
         try:
-            obj = ProfileOperation.objects.get(
-                profile_id=testconfig_pk,
+            objs = ProfileOperation.objects.filter(
+                profile_id=int(testconfig_pk),
                 operation_id=operation_id,
                 is_deleted=0
             )
         except ProfileOperation.DoesNotExist:
-            obj = None
+            objs = None
 
         config = {
             'found': True,
             'method': testmethod,
             'status_code': status_code,
             'summary': 'Unknown',
-            'urlpath': urlpath if obj is None else obj.urlpath,
+            'urlpath': urlpath if objs is None else objs[0].urlpath,
             'operation_id': operation_id,
             'profile_id': testconfig_pk,
             'payload': self.request.POST.get('json_body')
