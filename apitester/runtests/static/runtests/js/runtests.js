@@ -38,12 +38,6 @@ $(function() {
 		});
 	}
 
-    function clearjQueryCache(){
-        for (var x in jQuery.cache){
-            delete jQuery.cache[x];
-        }
-    }
-
 	$('#run').click(function() {
 		$('.result').empty();
 		var runners = $('.runner');
@@ -84,7 +78,6 @@ $(function() {
 			'remark':remark,
             'csrfmiddlewaretoken': window.CSRF
 		}, function (response) {
-		    clearjQueryCache();
         	t.next().show().fadeOut(1000);
         });
     });
