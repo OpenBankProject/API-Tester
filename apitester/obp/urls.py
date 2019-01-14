@@ -12,32 +12,15 @@ from .views import (
     LogoutView,
 )
 
-from django.conf import settings
-import logging
-
-LOGGER = logging.getLogger(__name__)
-
-def LogAtStart():
-    LOGGER.log(logging.INFO, 'OAUTH_BASE_URL: {}'.format(
-        settings.OAUTH_BASE_URL))
-
-    LOGGER.log(logging.INFO, 'API_HOST: {}'.format(
-        settings.API_HOST))
-
-    LOGGER.log(logging.INFO, 'API_ROOT: {}'.format(
-        settings.API_ROOT))
-
-LogAtStart()
-
 urlpatterns = [
     url(r'^oauth/initiate$',
-        OAuthInitiateView.as_view(), name='oauth-initiate'),
+        OAuthInitiateView.as_view(), name='obp-oauth-initiate'),
     url(r'^oauth/authorize$',
-        OAuthAuthorizeView.as_view(), name='oauth-authorize'),
+        OAuthAuthorizeView.as_view(), name='obp-oauth-authorize'),
     url(r'^directlogin$',
-        DirectLoginView.as_view(), name='directlogin'),
+        DirectLoginView.as_view(), name='obp-directlogin'),
     url(r'^gatewaylogin$',
-        GatewayLoginView.as_view(), name='gatewaylogin'),
+        GatewayLoginView.as_view(), name='obp-gatewaylogin'),
     url(r'^logout$',
-        LogoutView.as_view(), name='oauth-logout'),
+        LogoutView.as_view(), name='obp-oauth-logout'),
 ]

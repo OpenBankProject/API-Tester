@@ -100,7 +100,7 @@ $(function() {
 			'remark':remark,
             'csrfmiddlewaretoken': window.CSRF
 		}, function (response) {
-		    $(item_list).clone().appendTo($(item_list));
+		    $(item_list).clone(true).insertAfter($(item_list));
         });
     });
 
