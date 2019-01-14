@@ -418,7 +418,8 @@ def saveJsonBody(request):
         'profile_id': profile_id,
         'order': order,
         'urlpath': urlpath,
-        'remark':remark
+        'remark':remark,
+        'is_deleted':0
     }
 
     profile_list = ProfileOperation.objects.update_or_create(
@@ -451,7 +452,7 @@ def copyJsonBody(request):
 
     replica_id = max([profile.replica_id for profile in profile_list])+1
 
-    ProfileOperation.objects.create(profile_id = profile_id, operation_id = operation_id, json_body = json_body, order = order, urlpath = urlpath, remark=remark, replica_id = replica_id)
+    ProfileOperation.objects.create(profile_id = profile_id, operation_id = operation_id, json_body = json_body, order = order, urlpath = urlpath, remark=remark, replica_id = replica_id, is_deleted=0)
 
     return JsonResponse({'state': True})
 

@@ -38,14 +38,23 @@ $(function() {
 		});
 	}
 
+    function clearjQueryCache(){
+        for (var x in jQuery.cache){
+            delete jQuery.cache[x];
+        }
+    }
+
 	$('#run').click(function() {
 		$('.result').empty();
 		var runners = $('.runner');
-		for (var i=0; i < runners.length; i++) {
-			var runner = $(runners[i]);
-			if (runner.find('input').is(':checked')) {
-				runTest(runner);
-			}
+		var runNum =$('#numRun');
+		for(var j=0; j < $(runNum).val(); j++){
+            for (var i=0; i < runners.length; i++) {
+                var runner = $(runners[i]);
+                if (runner.find('input').is(':checked')) {
+                    runTest(runner);
+                }
+            }
 		}
 	});
 
@@ -75,6 +84,7 @@ $(function() {
 			'remark':remark,
             'csrfmiddlewaretoken': window.CSRF
 		}, function (response) {
+		    clearjQueryCache();
         	t.next().show().fadeOut(1000);
         });
     });
