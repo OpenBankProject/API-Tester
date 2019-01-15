@@ -38,6 +38,29 @@ $(function() {
 		});
 	}
 
+    function deleteTest(runner){
+        var item_list = $(runner).parent();
+        jsonBody = $(runner).find('textarea[name="params"]').val();
+        operationId = $(runner).find('input[type="hidden"]').val();
+        order = $(runner).find('input[name="order"]').val();
+        urlpath = $(runner).find('input[name="urlpath"]').val();
+        replica_id = $(runner).find('input[name="replica_id"]').val();
+        remark = $(runner).find('textarea[name="remark"]').val();
+
+        $.post('/runtests/delete/json_body', {
+        	'json_body': jsonBody,
+          'operation_id': operationId,
+          'profile_id' : window.CURRENT_PROFILE_ID,
+            'order': order,
+          'urlpath': urlpath,
+          'replica_id':replica_id,
+          'remark':remark,
+          'csrfmiddlewaretoken': window.CSRF
+		}, function (response) {
+        	$(item_list).remove();
+        });
+    }
+
 	$('#run').click(function() {
 		$('.result').empty();
 		var runners = $('.runner');
@@ -108,28 +131,8 @@ $(function() {
     });
 
     $('.runner button.forDelete').click(function() {
-        var t = $(this)
         var runner = $(this).parent().parent().parent();
-        var item_list = $(runner).parent();
-        jsonBody = $(runner).find('textarea[name="params"]').val();
-        operationId = $(runner).find('input[type="hidden"]').val();
-        order = $(runner).find('input[name="order"]').val();
-        urlpath = $(runner).find('input[name="urlpath"]').val();
-        replica_id = $(runner).find('input[name="replica_id"]').val();
-        remark = $(runner).find('textarea[name="remark"]').val();
-
-        $.post('/runtests/delete/json_body', {
-        	'json_body': jsonBody,
-          'operation_id': operationId,
-          'profile_id' : window.CURRENT_PROFILE_ID,
-            'order': order,
-          'urlpath': urlpath,
-          'replica_id':replica_id,
-          'remark':remark,
-          'csrfmiddlewaretoken': window.CSRF
-		}, function (response) {
-        	$(item_list).remove();
-        });    
+        deleteTest(runner)
 	});
 
 	$('#checkNone').click(function() {
@@ -138,6 +141,17 @@ $(function() {
 
 	$('#checkAll').click(function() {
 		$('.runner').find('input').prop('checked', true);
+	});
+
+    $('#removeUncheck').click(function() {
+		var runners = $('.runner');
+
+        for (var i=0; i < runners.length; i++) {
+            var runner = $(runners[i]);
+            if (!runner.find('input').is(':checked')) {
+                deleteTest(runner)
+            }
+        }
 	});
 
     $('#select-testconfig').change(function() {

@@ -73,32 +73,33 @@ class IndexView(LoginRequiredMixin, TemplateView):
         try:
             objs = ProfileOperation.objects.filter(
                 profile_id=testconfig_pk,
-                operation_id=data[method]['operationId'],
-                is_deleted=0
+                operation_id=data[method]['operationId']
             )
         except ProfileOperation.DoesNotExist:
             objs = None
 
         request_body = {}
         urlpath = self.get_urlpath(testconfigs["selected"], path)
+
         if objs is not None and len(objs)>0:
             objs_list = []
             for obj in objs:
-                params = obj.json_body
-                order = obj.order
-                urlpath = obj.urlpath
-                replica_id = obj.replica_id
-                remark = obj.remark if obj.remark is not None else data[method]['summary']
-                objs_list.append({
-                    'urlpath': urlpath,
-                    'method': method,
-                    'order': order,
-                    'params': params,
-                    'summary': remark,
-                    'operationId': data[method]['operationId'],
-                    'replica_id':replica_id,
-                    'responseCode': 200,
-                })
+                if obj.is_deleted==0:
+                    params = obj.json_body
+                    order = obj.order
+                    urlpath = obj.urlpath
+                    replica_id = obj.replica_id
+                    remark = obj.remark if obj.remark is not None else data[method]['summary']
+                    objs_list.append({
+                        'urlpath': urlpath,
+                        'method': method,
+                        'order': order,
+                        'params': params,
+                        'summary': remark,
+                        'operationId': data[method]['operationId'],
+                        'replica_id':replica_id,
+                        'responseCode': 200,
+                    })
             return objs_list
 
         elif method == 'post' or method == 'put':
