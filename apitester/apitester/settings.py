@@ -156,10 +156,6 @@ LOGGING = {
         'obp': {
             'handlers': ['console'],
             'level': 'INFO',
-        },
-        'apitester':{
-            'handlers': ['console'],
-            'level': 'INFO',
         }
     },
 }
