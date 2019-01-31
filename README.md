@@ -76,7 +76,7 @@ API_HOST = '<hostname>'
 
 # Consumer key + secret to authenticate the _app_ against the API
 # When the app is created on the API, the redirect URL should point to this
-# host + /obp, e.g. `http://localhost:8000/obp`
+# host + /obp, e.g. `http://localhost:8000`
 OAUTH_CONSUMER_KEY = '<key>'
 OAUTH_CONSUMER_SECRET = '<secret>'
 
