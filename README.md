@@ -129,10 +129,10 @@ OAUTH_BASE_URL='http://127.0.0.1:8000'
 ## Run the app
 
 ```bash
-(venv)$ ./apitester/manage.py runserver
+(venv)$ ./apitester/manage.py runserver localhost:8084
 ```
 
-The application should be available at `http://localhost:8000`.
+The application should be available at `http://localhost:8084`.
 
 
 
