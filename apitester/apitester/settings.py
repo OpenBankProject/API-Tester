@@ -156,7 +156,7 @@ LOGGING = {
         'obp': {
             'handlers': ['console'],
             'level': 'INFO',
-        },
+        }
     },
 }
 
@@ -186,9 +186,11 @@ DIRECTLOGIN_PATH = '/my/logins/direct'
 GATEWAYLOGIN_HAS_CBS = False
 
 API_HOST = 'http://127.0.0.1:8080'
+#API_HOST = 'https://apisandbox.openbankproject.com'
 API_BASE_PATH = '/obp/v'
 API_VERSION = '3.0.0'
 
+OAUTH_BASE_URL='http://127.0.0.1:9090'
 
 # Always save session
 SESSION_SAVE_EVERY_REQUEST = True
@@ -210,4 +212,5 @@ if not OAUTH_CONSUMER_SECRET:
 
 # Settings here might use parts overwritten in local settings
 API_ROOT = API_HOST + API_BASE_PATH + API_VERSION
-OAUTH_BASE_URL='http://127.0.0.1:8000'
+
+#OAUTH_BASE_URL='https://apisandbox.openbankproject.com'
