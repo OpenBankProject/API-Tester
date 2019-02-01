@@ -62,9 +62,22 @@ exit
 There is also an example using sqlite, see 'configure settings'.
 
 
+## Get API Key
+We need to register API Tester as an App / Consumer of the API we are testing.
+
+When the Consumer / App is created on the API, **the redirect URL MUST point to this host**, e.g. `http://localhost:8084`
+
+Make sure you don't add a trailing slash to the redirect URL etc.
+
+
+
+
 ## Configure settings
 
 Create and edit `apitester/apitester/local_settings.py`:
+
+
+
 
 ### Postgres Example
 
@@ -75,8 +88,8 @@ SECRET_KEY = '<random string>'
 API_HOST = '<hostname>'
 
 # Consumer key + secret to authenticate the _app_ against the API
-# When the app is created on the API, the redirect URL should point to this
-# host + /obp, e.g. `http://localhost:8000`
+
+
 OAUTH_CONSUMER_KEY = '<key>'
 OAUTH_CONSUMER_SECRET = '<secret>'
 
