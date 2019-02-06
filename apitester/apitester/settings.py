@@ -190,7 +190,7 @@ API_HOST = 'http://127.0.0.1:8080'
 API_BASE_PATH = '/obp/v'
 API_VERSION = '3.0.0'
 
-OAUTH_BASE_URL='http://127.0.0.1:9090'
+REDIRECT_URL='http://127.0.0.1:9090'
 
 # Always save session
 SESSION_SAVE_EVERY_REQUEST = True
@@ -213,4 +213,4 @@ if not OAUTH_CONSUMER_SECRET:
 # Settings here might use parts overwritten in local settings
 API_ROOT = API_HOST + API_BASE_PATH + API_VERSION
 
-#OAUTH_BASE_URL='https://apisandbox.openbankproject.com'
+#REDIRECT_URL='https://apisandbox.openbankproject.com'
