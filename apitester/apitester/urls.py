@@ -15,8 +15,8 @@ import logging
 LOGGER = logging.getLogger(__name__)
 
 def LogAtStart():
-    LOGGER.log(logging.INFO, 'OAUTH_BASE_URL: {}'.format(
-        settings.OAUTH_BASE_URL))
+    LOGGER.log(logging.INFO, 'REDIRECT_URL: {}'.format(
+        settings.REDIRECT_URL))
 
     LOGGER.log(logging.INFO, 'API_HOST: {}'.format(
         settings.API_HOST))

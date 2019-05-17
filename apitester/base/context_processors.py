@@ -21,7 +21,8 @@ def api_username(request):
         try:
             api = API(request.session.get('obp'))
             data = api.get('/users/current')
-            username = data['username']
+            if 'username' in data:
+                username = data['username']
         except APIError as err:
             messages.error(request, err)
     return {'API_USERNAME': username}

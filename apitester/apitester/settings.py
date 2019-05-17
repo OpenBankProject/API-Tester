@@ -190,7 +190,7 @@ API_HOST = 'http://127.0.0.1:8080'
 API_BASE_PATH = '/obp/v'
 API_VERSION = '3.0.0'
 
-OAUTH_BASE_URL='http://127.0.0.1:9090'
+REDIRECT_URL='http://127.0.0.1:9090'
 
 # Always save session
 SESSION_SAVE_EVERY_REQUEST = True
@@ -214,10 +214,10 @@ if not OAUTH_CONSUMER_SECRET:
 API_ROOT = API_HOST + API_BASE_PATH + API_VERSION
 
 ''' 
-OAUTH_BASE_URL should be the url of this appliation. It is used by API_HOST
+REDIRECT_URL should be the url of this appliation. It is used by API_HOST
 as the return url. API_HOST is the hostname & scheme of the Open Bank API.
 When API Tester (this application) tries to authenticate with Open Bank API
-during oauth1 flow, it sends the OAUTH_BASE_URL along with it which is 
+during oauth1 flow, it sends the REDIRECT_URL along with it which is 
 used as the redirect url back to this application.
 '''
-#OAUTH_BASE_URL='https://api-tester.example.com'
+#REDIRECT_URL='https://api-tester.example.com'

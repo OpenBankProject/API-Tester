@@ -52,7 +52,7 @@ class OAuthInitiateView(RedirectView):
         initiation at OAuth server
         """
         #base_url = '{}://{}'.format(request.scheme, request.environ['HTTP_HOST'])
-        base_url =  settings.OAUTH_BASE_URL
+        base_url =  settings.REDIRECT_URL
         uri = base_url + reverse('oauth-authorize')
         if 'next' in request.GET:
             uri = '{}?next={}'.format(uri, request.GET['next'])
