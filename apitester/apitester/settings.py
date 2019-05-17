@@ -213,4 +213,11 @@ if not OAUTH_CONSUMER_SECRET:
 # Settings here might use parts overwritten in local settings
 API_ROOT = API_HOST + API_BASE_PATH + API_VERSION
 
-#REDIRECT_URL='https://apisandbox.openbankproject.com'
+''' 
+REDIRECT_URL should be the url of this appliation. It is used by API_HOST
+as the return url. API_HOST is the hostname & scheme of the Open Bank API.
+When API Tester (this application) tries to authenticate with Open Bank API
+during oauth1 flow, it sends the REDIRECT_URL along with it which is 
+used as the redirect url back to this application.
+'''
+#REDIRECT_URL='https://api-tester.example.com'
