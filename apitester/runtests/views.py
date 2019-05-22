@@ -160,9 +160,9 @@ class IndexView(LoginRequiredMixin, TemplateView):
         testconfigs = self.get_testconfigs(testconfig_pk)
         api = API(self.request.session.get('obp'))
 
+        swaggers = []
         if 'selected' in testconfigs and testconfigs['selected']:
             api_version = testconfigs['selected'].api_version
-
             if re.match("^[1-3]\.[0-9]\.[0-9]$", api_version) is None:
                 api_version = settings.API_VERSION
 
@@ -174,22 +174,27 @@ class IndexView(LoginRequiredMixin, TemplateView):
                 for path, data in swagger['paths'].items():
                     if 'get' in data:
                         call = self.get_post_or_update('get', testconfigs, testconfig_pk, path, data, swagger)
+                        swaggers.append(data['get']['operationId'])
                         calls = calls+call
                     if 'post' in data:
                         call = self.get_post_or_update('post', testconfigs, testconfig_pk, path, data, swagger)
+                        swaggers.append(data['post']['operationId'])
                         calls = calls + call
 
                     if 'put' in data:
                         call = self.get_post_or_update('put', testconfigs, testconfig_pk, path, data, swagger)
+                        swaggers.append(data['put']['operationId'])
                         calls = calls + call
 
                     if 'delete' in data:
                         call = self.get_post_or_update('delete', testconfigs, testconfig_pk, path, data, swagger)
+                        swaggers.append(data['delete']['operationId'])
                         calls = calls + call
 
                 calls = sorted(calls, key=lambda item: item['order'], reverse=False)
 
         context.update({
+            'swaggers':swaggers,
             'calls': calls,
             'testconfigs': testconfigs,
             'testconfig_pk': testconfig_pk,
@@ -473,3 +478,101 @@ def deleteJsonBody(request):
     profile.save()
 
     return JsonResponse({'state': True})
+
+def api_replace(string, match, value):
+    """Helper to replace format strings from the API"""
+    # API sometimes uses '{match}' or 'match' to denote variables
+    return string. \
+        replace('{{{}}}'.format(match), value). \
+        replace(match, value)
+
+def get_urlpath(testconfig, path):
+    """
+    Gets a URL path
+    where placeholders in given path are replaced by values from testconfig
+    """
+    urlpath = path
+    for (index, match) in enumerate(URLPATH_REPLACABLES):
+        value = getattr(testconfig, match.lower())
+        if value:
+            urlpath = api_replace(urlpath, match, value)
+        else:
+            urlpath = api_replace(urlpath, match, URLPATH_DEFAULT[index])
+
+    return urlpath
+
+def addAPI(request):
+    operation_id = request.POST.get('operation_id')
+    profile_id = request.POST.get('profile_id')
+
+    testconfig = TestConfiguration.objects.get(
+        owner=request.user,
+        pk=profile_id,
+    )
+
+    api = API(request.session.get('obp'))
+    api_version = settings.API_VERSION
+    swagger = api.get_swagger(api_version)
+
+    request_body = {}
+    urlpath = ''
+    params = ''
+    remark = ''
+
+    for path, data in swagger['paths'].items():
+        if 'get' in data:
+            method = 'get'
+        if 'post' in data:
+            method = 'post'
+        if 'put' in data:
+            method = 'put'
+        if 'delete' in data:
+            method = 'delete'
+
+        if data[method]['operationId']==operation_id:
+            urlpath = get_urlpath(testconfig, path)
+            remark = data[method]['summary']
+        if method == 'post' or method == 'put':
+            request_body = {}
+            definition = data[method]['parameters'][0] if len(data[method]['parameters']) > 0 else None
+            definition = definition['schema']['$ref'][14:]
+            params = swagger['definitions'][definition]
+            if len(params["required"]) > 0:
+                for field in params["required"]:
+                    # Match Profile variables
+                    field_names = [ f.name for f in TestConfiguration._meta.fields]
+                    if field in field_names:
+                        request_body[field] = getattr(testconfig, field)
+                    else:
+                        try:
+                            request_body[field] = params["properties"][field].get("example", "")
+                        except:
+                            request_body[field] = None
+            params = json.dumps(request_body, indent=4)
+
+    #if not re.match("^{.*}$", json_body):
+    #    json_body = "{{{}}}".format(json_body)
+
+    profile_list = ProfileOperation.objects.filter(
+        operation_id=operation_id,
+        profile_id=profile_id
+    )
+
+    if profile_list is None or len(profile_list)==0:
+        replica_id = 1
+    else:
+        replica_id = max([profile.replica_id for profile in profile_list])+1
+
+    ProfileOperation.objects.create(profile_id = profile_id, operation_id = operation_id, json_body = params, order = 100, urlpath = urlpath, remark=remark, replica_id = replica_id, is_deleted=0)
+
+    return JsonResponse({
+        'state': True,
+        'profile_id': profile_id,
+        'operation_id': operation_id,
+        'json_body': params,
+        'order': 100,
+        'urlpath': urlpath,
+        'remark': remark,
+        'replica_id': replica_id,
+        'is_deleted': 0
+    })
