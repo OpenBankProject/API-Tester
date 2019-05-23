@@ -11,7 +11,7 @@ from .views import (
     TestConfigurationCreateView,
     TestConfigurationUpdateView,
     TestConfigurationDeleteView,
-    saveJsonBody,
+    saveJsonBody, addAPI,
     copyJsonBody, deleteJsonBody)
 
 
@@ -28,6 +28,11 @@ urlpatterns = [
     url(r'testconfig/add/$',
         TestConfigurationCreateView.as_view(),
         name='runtests-testconfig-add'),
+
+    url(r'add/api',
+        addAPI,
+        name='runtests-api-add'),
+
     url(r'testconfig/(?P<pk>[0-9]+)/$',
         TestConfigurationUpdateView.as_view(),
         name='runtests-testconfig-update'),

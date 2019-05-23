@@ -136,6 +136,20 @@
 				<label>runs num: </label><input type="text" id="numRun" size="1" value=1 />
 			</div>
 		</div>
+
+        <div class="row">
+            <div class="col-xs-12 col-sm-10">
+                <select id="select-api" class="form-control">
+                    <option value="">Select test api ...</option>
+                    {% for swagger in swaggers %}
+                    <option value="{{ swagger  }}">{{ swagger }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-xs-12 col-sm-2">
+                <a id="api-add" class="btn btn-success form-control">Add API</a>
+            </div>
+        </div>
 	</div>
 
 	<ul class="hide" id="test-list">
