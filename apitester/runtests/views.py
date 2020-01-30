@@ -237,6 +237,7 @@ class RunView(LoginRequiredMixin, TemplateView):
                 urlpath = self.api_replace(urlpath, match, URLPATH_DEFAULT[index])
         return urlpath
 
+   #get config for one operation.
     def get_config(self, testmethod, testpath, testconfig_pk, operation_id):
         """Gets test config from swagger and database"""
         urlpath = urllib.parse.unquote(testpath)
@@ -251,10 +252,11 @@ class RunView(LoginRequiredMixin, TemplateView):
             status_code = 204
 
         try:
+            # get profile from the database..
             objs = ProfileOperation.objects.filter(
-                profile_id=int(testconfig_pk),
-                operation_id=operation_id,
-                is_deleted=0
+                profile_id=int(testconfig_pk), # 1
+                operation_id=operation_id, # OBPv3.0.0-getBanks
+                is_deleted=0 
             )
         except ProfileOperation.DoesNotExist:
             objs = None
@@ -502,23 +504,24 @@ def get_urlpath(testconfig, path):
     return urlpath
 
 def addAPI(request):
-    operation_id = request.POST.get('operation_id')
-    profile_id = request.POST.get('profile_id')
+    operation_id = request.POST.get('operation_id') # get the operation_id
+    profile_id = request.POST.get('profile_id') # get the profile_id 
 
     testconfig = TestConfiguration.objects.get(
         owner=request.user,
         pk=profile_id,
-    )
+    )# test configuration..
 
     api = API(request.session.get('obp'))
     api_version = settings.API_VERSION
     swagger = api.get_swagger(api_version)
 
     request_body = {}
-    urlpath = ''
-    params = ''
-    remark = ''
+    urlpath = ' '#path can not be empty string.
+    params = ' '
+    remark = ' '
 
+    # this for is used to set the urlpath, params and remark
     for path, data in swagger['paths'].items():
         if 'get' in data:
             method = 'get'
@@ -558,12 +561,22 @@ def addAPI(request):
         profile_id=profile_id
     )
 
+    # if the relica_id is existing, then
     if profile_list is None or len(profile_list)==0:
         replica_id = 1
     else:
         replica_id = max([profile.replica_id for profile in profile_list])+1
 
-    ProfileOperation.objects.create(profile_id = profile_id, operation_id = operation_id, json_body = params, order = 100, urlpath = urlpath, remark=remark, replica_id = replica_id, is_deleted=0)
+    ProfileOperation.objects.create( # create the new operation.
+        profile_id = profile_id, 
+        operation_id = operation_id, 
+        json_body = params, 
+        order = 100, 
+        urlpath = urlpath, 
+        remark=remark, 
+        replica_id = replica_id, 
+        is_deleted=0
+    )
 
     return JsonResponse({
         'state': True,
