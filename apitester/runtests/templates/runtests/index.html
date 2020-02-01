@@ -163,8 +163,8 @@
 						</div>
 					</div>
 					<div class="col-xs-5">
-						<input class="form-control" type="text" name="urlpath" size="50" value="{{ call.urlpath }}">
-						<input  class="form-control" type="hidden" name="testconfig_pk" size="1" value="{{  testconfig_pk  }}" />
+						<input class="form-control" type="text" name="urlpath" size="50" value="{{call.urlpath}}">
+						<input  class="form-control" type="hidden" name="testconfig_pk" size="1" value="{{testconfig_pk}}" />
 					</div>
 					<div class="col-xs-3">
 						{% if call.method == "post" or call.method == 'put' %}
@@ -184,7 +184,6 @@
 					</div>
 					<div class="col-xs-12 col-sm-9 result"></div>
 
-				
             	</div>
 			</li>
 		</div>
