@@ -211,6 +211,21 @@ class ProfileOperation(models.Model):
         null=False
     )
 
+    method = models.CharField(
+        max_length=255,
+        verbose_name="method",
+        help_text="method",
+        blank=True,
+        null=False
+    )
+
+    save_time = models.CharField(
+        max_length=255,
+        verbose_name="save_time",
+        help_text="save_time",
+        blank=True,
+        null=False
+    )
     class Meta:
         verbose_name = 'Test Profile Operation'
         verbose_name_plural = 'Test Profile Operation'

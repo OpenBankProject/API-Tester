@@ -22,6 +22,7 @@ $(function() {
 			var msg = '';
 			var collapse = '';
 			var text = `<pre>${escapeHTML(data['text'])}</pre>`;
+			const collapseId = data['config']['operation_id'].replace(/\./g, '_')
 			if (!data['success']) {
 				alertType = 'danger';
 				msg = '<ul>';
@@ -30,10 +31,10 @@ $(function() {
 				}
 				msg += '</ul>';
 			} else {
-				collapse = `<button type='button' class='btn btn-xs btn-success pull-right' data-toggle='collapse' data-target='#${data['config']['operation_id']}' aria-expanded='false'><span class='glyphicon glyphicon-chevron-right'></span><span class='glyphicon glyphicon-chevron-down'></span></button>"`;
-				text = `<div id='${data['config']['operation_id']}' class='collapse'>${text}</div>`;
+				collapse = `<button type='button' class='btn btn-xs btn-success pull-right' data-toggle='collapse' data-target='#${collapseId}' aria-expanded='false'><span class='glyphicon glyphicon-chevron-right'></span><span class='glyphicon glyphicon-chevron-down'></span></button>"`;
+				text = `<div id='${collapseId}' class='collapse'>${data['text']}</div>`;
 			}
-			var result =`<div class='alert alert-${alertType}'><div class='row'><div class='col-xs-10 col-sm-11'>${data['config']['summary']}<br />${data['config']['urlpath']}<br />Took ${data['execution_time']} ms<br />${msg}</div><div class='col-xs-2 col-sm-1'>${collapse}</div></div>${text}</div>`;
+			var result =`<div class='alert alert-${alertType}'><div class='row'><div class='col-xs-10 col-sm-11'>${data['config']['summary']}<br />${data['config']['urlpath']}<br />Took ${data['execution_time']} ms<br />Status Code: ${data['status_code']}</div><div class='col-xs-2 col-sm-1'>${collapse}</div></div>${text}</div>`;
 			$(runner.find('.result')).append(result);
 		});
 	}
@@ -48,14 +49,14 @@ $(function() {
         remark = $(runner).find('textarea[name="remark"]').val();
 
         $.post('/runtests/delete/json_body', {
-        	'json_body': jsonBody,
-          'operation_id': operationId,
-          'profile_id' : window.CURRENT_PROFILE_ID,
+            'json_body': jsonBody,
+            'operation_id': operationId,
+            'profile_id' : window.CURRENT_PROFILE_ID,
             'order': order,
-          'urlpath': urlpath,
-          'replica_id':replica_id,
-          'remark':remark,
-          'csrfmiddlewaretoken': window.CSRF
+            'urlpath': urlpath,
+            'replica_id':replica_id,
+            'remark':remark,
+            'csrfmiddlewaretoken': window.CSRF
 		}, function (response) {
         	$(item_list).remove();
         });
@@ -90,6 +91,7 @@ $(function() {
 		urlpath = $(runner).find('input[name="urlpath"]').val();
 		replica_id = $(runner).find('input[name="replica_id"]').val();
 		remark = $(runner).find('textarea[name="remark"]').val();
+		testmethod = $(runner).find('input[name="method"]').val();
 
         $.post('/runtests/save/json_body', {
         	'json_body': jsonBody,
@@ -99,9 +101,11 @@ $(function() {
 			'urlpath': urlpath,
 			'replica_id':replica_id,
 			'remark':remark,
+			'method':testmethod,
             'csrfmiddlewaretoken': window.CSRF
 		}, function (response) {
         	t.next().show().fadeOut(1000);
+        	location.reload();
         });
     });
 
@@ -115,6 +119,7 @@ $(function() {
 		urlpath = $(runner).find('input[name="urlpath"]').val();
 		replica_id = $(runner).find('input[name="replica_id"]').val();
 		remark = $(runner).find('textarea[name="remark"]').val();
+        testmethod = $(runner).find('input[name="method"]').val();
 
         $.post('/runtests/copy/json_body', {
         	'json_body': jsonBody,
@@ -124,6 +129,7 @@ $(function() {
 			'urlpath': urlpath,
 			'replica_id':replica_id,
 			'remark':remark,
+			'method':testmethod,
             'csrfmiddlewaretoken': window.CSRF
 		}, function (response) {
 		    $(item_list).clone(true).insertAfter($(item_list));
