@@ -23,6 +23,14 @@ class TestConfiguration(models.Model):
         blank=False,
         null=False,
     )
+     
+    resource_doc_params = models.CharField(
+        max_length=255,
+        verbose_name='Params',
+        help_text='Resource Doc Parameters to filter the APIs returned',
+        blank=True,
+        null=True,
+    )
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         verbose_name='Owner',

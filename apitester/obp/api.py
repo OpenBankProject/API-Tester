@@ -168,7 +168,27 @@ class API(object):
         Uses API version 3.0.0 per default, but can be overridden by e.g.
         testconfig
         """
-        urlpath = '/resource-docs/v{}/swagger'.format(api_version)
+        """
+        Typical path
+        https://apisandbox.openbankproject.com/obp/v3.1.0/resource-docs/v3.1.0/swagger?functions=getBanks,bankById
+
+
+        https://apisandbox.ofpilot.com/mx-open-finance/v0.0.1/accounts
+
+        """
+
+
+        #
+        # api_version MUST be specified in the following format: <STANDARD>v<VERSION>
+        #
+        # UKv2.0  /obp/v4.0.0/resource-docs/UKv2.0/obp (previously /obp/v4.0.0/resource-docs/v2.0/obp)
+        # BGv1  /obp/v4.0.0/resource-docs/BGv1/obp (previously /obp/v4.0.0/resource-docs/v1/obp)
+        # BGv1.3  /obp/v4.0.0/resource-docs/BGv1.3/obp (previously /obp/v4.0.0/resource-docs/v1.3/obp)
+        # MXOFv0.0.1  /obp/v4.0.0/resource-docs/MXOFv0.0.1/obp
+        # OBPv4.0.0  /obp/v4.0.0/resource-docs/OBPv4.0.0/obp (previously /obp/v4.0.0/resource-docs/v4.0.0/obp)
+        # etc.
+
+        urlpath = '/resource-docs/{}/swagger'.format(api_version)
         if not cache.get(urlpath):
             swagger = self.get(urlpath)
             cache.set(urlpath, swagger, settings.CACHE_TIMEOUT)

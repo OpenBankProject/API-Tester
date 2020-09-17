@@ -7,7 +7,7 @@ from django import forms
 import random
 from .models import TestConfiguration
 
-from django.core.validators import RegexValidator
+from django.core.validators import RegexValidator, ValidationError
 
 
 class TestConfigurationForm(forms.ModelForm):
@@ -15,13 +15,27 @@ class TestConfigurationForm(forms.ModelForm):
         model = TestConfiguration
         exclude = ['owner']
 
+    
+
+    def clean_api_version(self):
+        allowed_api_versions = ['OBPv4.0.0', 'OBPv3.1.0', 'MXOFv0.0.1', 'BGv1.3']
+
+
+        data = self.cleaned_data['api_version']
+        if data not in allowed_api_versions:
+            raise ValidationError("The api_version needs to be one of {}".format(allowed_api_versions) )
+
+        # Always return a value to use as the new cleaned data, even if
+        # this method didn't change it.
+        return data
+
     api_version = forms.CharField(
-        label='api_verison',
-        validators=[RegexValidator(r'^\d\.\d\.\d$', 'Please Input correct api_version like 3.1.0')],
+        label='API Version',
+        #validators=[validate_api_standard],
         widget=forms.TextInput(
             attrs={
-                'value': '3.1.0',
-                'placeholder': '3.1.0',
+                'value': 'OBPv4.0.0',
+                'placeholder': 'OBPv4.0.0',
                 'class': 'form-control',
             }
         ),
