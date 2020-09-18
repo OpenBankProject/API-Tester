@@ -353,10 +353,16 @@ class TestConfigurationCreateView(LoginRequiredMixin, CreateView):
     def get_success_url(self):
         testconfig = self.get_testconfigs(self.object.pk)['selected']
         self.api = API(self.request.session.get('obp'))
+        
         api_version = testconfig.api_version
-        print ("api_version is {}".format(api_version))
-        swagger = self.api.get_swagger(api_version)
-        print("the swagger is {}".format(swagger))
+        resource_doc_params = testconfig.resource_doc_params
+
+        #print ("api_version is {}".format(api_version))
+        #print ("resource_doc_params is {}".format(resource_doc_params))
+        
+        swagger = self.api.get_swagger(api_version, resource_doc_params)
+
+        #print("the swagger is {}".format(swagger))
 
 
         # Within successful response we expect there to be paths

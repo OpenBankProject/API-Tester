@@ -23,7 +23,8 @@
 			<div class="col-xs-12 col-sm-4">
 				<div class="form-group">
 					{{ form.api_version.errors }}
-					<label for="api_version">{{ form.api_version.label_tag }}</label>
+					<label for="api_version">{{ form.api_version.label_tag }}</label></br>
+					{{ form.api_version.help_text }}
 					{{ form.api_version }}
 				</div>
 			</div>
@@ -31,7 +32,8 @@
 			<div class="col-xs-12 col-sm-4">
 				<div class="form-group">
 					{{ form.resource_doc_params.errors }}
-					<label for="resource_doc_params">{{ form.resource_doc_params.label_tag }}</label>
+					<label for="resource_doc_params">{{ form.resource_doc_params.label_tag }}</label></br>
+					{{ form.resource_doc_params.help_text }}
 					{{ form.resource_doc_params }}
 				</div>
 			</div>

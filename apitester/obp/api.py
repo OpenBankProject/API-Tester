@@ -162,7 +162,7 @@ class API(object):
         else:
             return None
 
-    def get_swagger(self, api_version='3.0.0'):
+    def get_swagger(self, api_version='OBPv3.1.0', resource_doc_params=''):
         """
         Gets the swagger definition from the API
         Uses API version 3.0.0 per default, but can be overridden by e.g.
@@ -188,7 +188,10 @@ class API(object):
         # OBPv4.0.0  /obp/v4.0.0/resource-docs/OBPv4.0.0/obp (previously /obp/v4.0.0/resource-docs/v4.0.0/obp)
         # etc.
 
-        urlpath = '/resource-docs/{}/swagger'.format(api_version)
+        urlpath = '/resource-docs/{}/swagger?{}'.format(api_version, resource_doc_params)
+
+        print ("urlpath is {}".format(urlpath))
+
         if not cache.get(urlpath):
             swagger = self.get(urlpath)
             cache.set(urlpath, swagger, settings.CACHE_TIMEOUT)

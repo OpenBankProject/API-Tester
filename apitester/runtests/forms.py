@@ -18,12 +18,12 @@ class TestConfigurationForm(forms.ModelForm):
     
 
     def clean_api_version(self):
-        allowed_api_versions = ['OBPv4.0.0', 'OBPv3.1.0', 'MXOFv0.0.1', 'BGv1.3']
+        allowed_api_versions = ['OBPv4.0.0', 'OBPv3.1.0', 'OBPv3.0.0', 'MXOFv0.0.1', 'BGv1.3']
 
 
         data = self.cleaned_data['api_version']
         if data not in allowed_api_versions:
-            raise ValidationError("The api_version needs to be one of {}".format(allowed_api_versions) )
+            raise ValidationError("The API Version needs to be one of {}".format(allowed_api_versions) )
 
         # Always return a value to use as the new cleaned data, even if
         # this method didn't change it.
@@ -31,12 +31,13 @@ class TestConfigurationForm(forms.ModelForm):
 
     api_version = forms.CharField(
         label='API Version',
+        help_text='Version of the API to initially generate in the format STANDARDvVERSION e.g. OBPv4.0.0',
         #validators=[validate_api_standard],
         widget=forms.TextInput(
             attrs={
                 'value': 'OBPv4.0.0',
                 'placeholder': 'OBPv4.0.0',
-                'class': 'form-control',
+                'class': 'form-control'
             }
         ),
         required=False,

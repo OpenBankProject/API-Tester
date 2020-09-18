@@ -32,9 +32,14 @@
 			</div>
 			<div class="well">
 				<div class="row">
-					<div class="col-xs-12">
-						<span class="text-muted">{% get_verbose_field_name config "api_version" %}</span><br /><code>{{ config.api_version }}</code>
+					<div class="col-xs-12 col-sm-4">
+						<span class="text-muted">Initial {% get_verbose_field_name config "api_version" %}</span><br /><code>{{ config.api_version }}</code>
 					</div>
+
+					<div class="col-xs-12 col-sm-4">
+						<span class="text-muted">Initial {% get_verbose_field_name config "resource_doc_params" %}</span><br /><code>{{ config.resource_doc_params }}</code>
+					</div>
+
 				</div>
 
 				<div class="row">
