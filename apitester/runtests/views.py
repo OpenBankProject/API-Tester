@@ -11,8 +11,8 @@ import time
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.exceptions import PermissionDenied
-from django.http import JsonResponse
+from django.core.exceptions import PermissionDenied 
+from django.http import JsonResponse, HttpResponse
 from django.urls import reverse_lazy, reverse
 from django.views.generic import TemplateView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
@@ -21,6 +21,8 @@ from obp.api import API, APIError
 import logging
 from .forms import TestConfigurationForm
 from .models import TestConfiguration, ProfileOperation
+
+
 
 LOGGER = logging.getLogger(__name__)
 # TODO: These have to map to attributes of models.TestConfiguration
@@ -351,9 +353,33 @@ class TestConfigurationCreateView(LoginRequiredMixin, CreateView):
     def get_success_url(self):
         testconfig = self.get_testconfigs(self.object.pk)['selected']
         self.api = API(self.request.session.get('obp'))
+        
         api_version = testconfig.api_version
-        swagger = self.api.get_swagger(api_version)
-        for path, data in swagger['paths'].items():
+        resource_doc_params = testconfig.resource_doc_params
+
+        #print ("api_version is {}".format(api_version))
+        #print ("resource_doc_params is {}".format(resource_doc_params))
+        
+        swagger = self.api.get_swagger(api_version, resource_doc_params)
+
+        #print("the swagger is {}".format(swagger))
+
+
+        # Within successful response we expect there to be paths
+        try:
+            swagger_paths_items = swagger['paths'].items()
+        except KeyError as err:
+            # We probably can extract the reason from the response("swagger")
+            response_code = swagger['code']
+            message = swagger['message']
+            # TODO Return this information calmly rather than as an exception.
+            raise Exception(str(response_code) + " " + str(message))
+
+            #return JsonResponse({'code': str(response_code), 'message': str(message)}, safe=True)
+            #return reverse('runtests-index-testconfig', kwargs={})
+
+        # Continue extracting the endpoints from the swagger json
+        for path, data in swagger_paths_items:
             for method, content in data.items():
                 urlpath = path
                 remark = content['summary']

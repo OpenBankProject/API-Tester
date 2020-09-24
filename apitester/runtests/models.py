@@ -16,12 +16,22 @@ class TestConfiguration(models.Model):
         blank=False,
         null=False,
     )
+
+    # Note: help_text below is duplicated in forms.py!
     api_version = models.CharField(
         max_length=255,
         verbose_name='API Version',
-        help_text='Version of the API to test, e.g. 3.0.0',
+        help_text='Version of the API to initially generate in the format STANDARDvVERSION e.g. OBPv4.0.0',
         blank=False,
         null=False,
+    )
+     
+    resource_doc_params = models.CharField(
+        max_length=255,
+        verbose_name='Params',
+        help_text='Parameters to limit the endpoint tests that are initially generated in this profile. e.g: functions=getBanks,bankById or tags=Account See the documentation for the getResourceDocsSwagger endpoint in the API Explorer for more information.',
+        blank=True,
+        null=True,
     )
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
