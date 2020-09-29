@@ -380,30 +380,35 @@ class TestConfigurationCreateView(LoginRequiredMixin, CreateView):
 
         # Continue extracting the endpoints from the swagger json
         for path, data in swagger_paths_items:
-            for method, content in data.items():
-                urlpath = path
-                remark = content['summary']
-                params = ''
-                if method == 'post' or method == 'put':
-                    definition = content['parameters'][0] if len(content['parameters']) > 0 else None
-                    definition = definition['schema']['$ref'][14:]
-                    params = swagger['definitions'][definition]
-                    request_body = {}
-                    if len(params["required"]) > 0:
-                        for field in params["required"]:
-                            # Match Profile variables
-                            field_names = [f.name for f in TestConfiguration._meta.fields]
-                            if field in field_names:
-                                request_body[field] = getattr(testconfig, field)
-                            else:
-                                try:
-                                    request_body[field] = params["properties"][field].get("example", "")
-                                except:
-                                    request_body[field] = None
-                    params = json.dumps(request_body, indent=4)
-                operation_id = content['operationId']
-                profile_id = testconfig.pk
-                profileOperation_insert(operation_id, params, profile_id, urlpath, remark, method)
+            try: # there are some special endpoints in obp-api side, the swagger format is not good enough to show in the API Tester, here we just log them.
+                for method, content in data.items():
+                    urlpath = path
+                    remark = content['summary']
+                    params = ''
+                    if method == 'post' or method == 'put':
+                        definition = content['parameters'][0] if len(content['parameters']) > 0 else None
+                        definition = definition['schema']['$ref'][14:]  # /definitions/BankJson400 -->  BankJson400
+                        params = swagger['definitions'][definition]
+                        request_body = {}
+                        if len(params["required"]) > 0:
+                            for field in params["required"]:
+                                # Match Profile variables
+                                field_names = [f.name for f in TestConfiguration._meta.fields]
+                                if field in field_names:
+                                    request_body[field] = getattr(testconfig, field)
+                                else:
+                                    try:
+                                        request_body[field] = params["properties"][field].get("example", "")
+                                    except:
+                                        request_body[field] = None
+                        params = json.dumps(request_body, indent=4)
+                    operation_id = content['operationId']
+                    profile_id = testconfig.pk
+                    profileOperation_insert(operation_id, params, profile_id, urlpath, remark, method)
+            except Exception as e:
+                #TODO, maybe later, we can show this to the HTML.
+                logging.error("this endpoint (path = {}) can not be used in API_Tester, check the format.".format(str(path)))
+                logging.error("the reason is : {}".format(e)) 
 
         return reverse('runtests-index-testconfig', kwargs={
             'testconfig_pk': self.object.pk,
