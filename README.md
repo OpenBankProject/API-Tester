@@ -134,6 +134,8 @@ REDIRECT_URL='http://127.0.0.1:8000'
 
 ## Initialise database
 
+Note: Database migrations are part of the source code and will come from this repository. If you make changes and need to run makemigrations by yourself, commit them afterwards.
+
 ```bash
 (venv)$ ./apitester/manage.py migrate
 ```
