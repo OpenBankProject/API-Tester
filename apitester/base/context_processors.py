@@ -31,3 +31,9 @@ def api_username(request):
 def logo_url(request):
     """Returns the configured LOGO_URL"""
     return {'logo_url': settings.LOGO_URL}
+
+
+def override_css_url(request):
+    """Returns the configured OVERRIDE_CSS_URL"""
+    return {'override_css_url': settings.OVERRIDE_CSS_URL}
+

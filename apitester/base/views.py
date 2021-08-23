@@ -19,6 +19,7 @@ class HomeView(TemplateView):
             'API_HOST': settings.API_HOST,
             'directlogin_form': DirectLoginForm(),
             'gatewaylogin_form': GatewayLoginForm(),
+            'override_css_url': settings.OVERRIDE_CSS_URL,
             'logo_url': settings.LOGO_URL,
         })
         return context
