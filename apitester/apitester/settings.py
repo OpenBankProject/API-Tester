@@ -72,6 +72,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'base.context_processors.api_root',
                 'base.context_processors.api_username',
+                'base.context_processors.logo_url'
             ],
         },
     },
@@ -198,6 +199,8 @@ SESSION_SAVE_EVERY_REQUEST = True
 # Set OAuth client key/secret in apitester/local_settings.py
 OAUTH_CONSUMER_KEY = None
 OAUTH_CONSUMER_SECRET = None
+
+LOGO_URL = 'https://static.openbankproject.com/images/OBP/favicon.png'
 
 # Local settings can override anything in here
 try:

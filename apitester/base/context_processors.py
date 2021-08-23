@@ -26,3 +26,8 @@ def api_username(request):
         except APIError as err:
             messages.error(request, err)
     return {'API_USERNAME': username}
+
+
+def logo_url(request):
+    """Returns the configured LOGO_URL"""
+    return {'logo_url': settings.LOGO_URL}
