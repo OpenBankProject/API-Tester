@@ -72,7 +72,8 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'base.context_processors.api_root',
                 'base.context_processors.api_username',
-                'base.context_processors.logo_url'
+                'base.context_processors.logo_url',
+                'base.context_processors.override_css_url'
             ],
         },
     },
@@ -147,7 +148,7 @@ LOGGING = {
         'mail_admins': {
             'level': 'ERROR',
             'class': 'django.utils.log.AdminEmailHandler',
-         },
+        },
     },
     'loggers': {
         'django': {
@@ -201,6 +202,7 @@ OAUTH_CONSUMER_KEY = None
 OAUTH_CONSUMER_SECRET = None
 
 LOGO_URL = 'https://static.openbankproject.com/images/OBP/favicon.png'
+OVERRIDE_CSS_URL = None
 
 # Local settings can override anything in here
 try:
