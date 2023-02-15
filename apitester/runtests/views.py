@@ -247,7 +247,6 @@ class RunView(LoginRequiredMixin, TemplateView):
             messages.error(self.request, err)
         else:
             for path, data in swagger['paths'].items():
-                print("path is ", path)
                 if testmethod in data and data[testmethod]['operationId'] == operation_id:
                     config.update({
                         'found': True,
@@ -551,7 +550,6 @@ def addAPI(request):
     )
 
     swagger = api.get_swagger(config.api_version)['paths']
-    print("swagger is:", swagger)
     params = ''
     urlpath=''
     remark=''
