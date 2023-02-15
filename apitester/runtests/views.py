@@ -246,8 +246,7 @@ class RunView(LoginRequiredMixin, TemplateView):
         except APIError as err:
             messages.error(self.request, err)
         else:
-            for path, data in swagger['path'].items():
-                print("path is ", path)
+            for path, data in swagger['paths'].items():
                 if testmethod in data and data[testmethod]['operationId'] == operation_id:
                     config.update({
                         'found': True,
@@ -366,9 +365,9 @@ class TestConfigurationCreateView(LoginRequiredMixin, CreateView):
         #print("the swagger is {}".format(swagger))
 
 
-        # Within successful response we expect there to be path
+        # Within successful response we expect there to be paths
         try:
-            swagger_path_items = swagger['path'].items()
+            swagger_path_items = swagger['paths'].items()
         except KeyError as err:
             # We probably can extract the reason from the response("swagger")
             response_code = swagger['code']
@@ -380,7 +379,7 @@ class TestConfigurationCreateView(LoginRequiredMixin, CreateView):
             #return reverse('runtests-index-testconfig', kwargs={})
 
         # Continue extracting the endpoints from the swagger json
-        for path, data in swagger_path_items:
+        for path, data in swagger_paths_items:
             try: # there are some special endpoints in obp-api side, the swagger format is not good enough to show in the API Tester, here we just log them.
                 for method, content in data.items():
                     urlpath = path
@@ -550,8 +549,7 @@ def addAPI(request):
         id = profile_id
     )
 
-    swagger = api.get_swagger(config.api_version)['path']
-    print("swagger is:", swagger)
+    swagger = api.get_swagger(config.api_version)['paths']
     params = ''
     urlpath=''
     remark=''

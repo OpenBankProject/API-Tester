@@ -190,7 +190,7 @@ GATEWAYLOGIN_HAS_CBS = False
 API_HOST = 'http://127.0.0.1:8080'
 #API_HOST = 'https://apisandbox.openbankproject.com'
 API_BASE_PATH = '/obp/v'
-API_VERSION = '4.0.0'
+API_VERSION = '3.0.0'
 
 REDIRECT_URL='http://127.0.0.1:9090'
 
