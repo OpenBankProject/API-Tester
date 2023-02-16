@@ -17,8 +17,12 @@
 				<select class="form-control" id="authentication-select">
 					<option value="">Choose ...</option>
 					<option value="oauth">OAuth 1</option>
+					{% if ALLOW_DIRECT_LOGIN %}
 					<option value="directlogin">DirectLogin</option>
+					{% endif %}
+					{% if ALLOW_GATEWAY_LOGIN %}
 					<option value="gatewaylogin">GatewayLogin</option>
+					{% endif %}
 				</select>
 			</div>
 
@@ -64,7 +68,5 @@
 	</div>
 {% endif %}
 	
-</div>
-
 </div>
 {% endblock %}
