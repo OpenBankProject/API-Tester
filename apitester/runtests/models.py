@@ -10,7 +10,7 @@ from django.conf import settings
 class TestConfiguration(models.Model):
     name = models.CharField(
         max_length=255,
-        verbose_name='Name',
+        verbose_name='Profile Name',
         unique=True,
         help_text='Name of the configuration',
         blank=False,
@@ -43,7 +43,7 @@ class TestConfiguration(models.Model):
     )
     username = models.CharField(
         max_length=255,
-        verbose_name='Username',
+        verbose_name='User Name',
         help_text='Username',
         blank=True,
         null=True,

@@ -34,7 +34,8 @@
 				<ul class="nav navbar-nav navbar-right">
 					<li>
 {% if user.is_authenticated %}
-                    <p class="navbar-btn"><a href="{% url 'oauth-logout' %}" class="btn btn-default">Logout {{ API_USERNAME }}</a></p>
+                    <!--<p class="navbar-btn"><a href="{% url 'oauth-logout' %}" class="btn btn-default">Logout {{ API_USERNAME }}</a></p>-->
+						<p class="navbar-btn"><span id="navbar-login-username">{{API_USERNAME}}</span>&nbsp;&nbsp;<a href="/logout" class="btn btn-default">Logout</a></p>
 {% endif %}
 					</li>
 				</ul>
