@@ -72,6 +72,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'base.context_processors.api_root',
                 'base.context_processors.api_username',
+                'base.context_processors.portal_page',
                 'base.context_processors.logo_url',
                 'base.context_processors.override_css_url'
             ],
@@ -188,6 +189,8 @@ DIRECTLOGIN_PATH = '/my/logins/direct'
 GATEWAYLOGIN_HAS_CBS = False
 
 API_HOST = 'http://127.0.0.1:8080'
+API_PORTAL = API_HOST
+API_EXPLORER_HOST = 'http://127.0.0.1:8082'
 #API_HOST = 'https://apisandbox.openbankproject.com'
 API_BASE_PATH = '/obp/v'
 API_VERSION = '5.1.0'
@@ -219,7 +222,7 @@ if not OAUTH_CONSUMER_SECRET:
 API_ROOT = API_HOST + API_BASE_PATH + API_VERSION
 
 ''' 
-REDIRECT_URL should be the url of this appliation. It is used by API_HOST
+REDIRECT_URL should be the url of this application. It is used by API_HOST
 as the return url. API_HOST is the hostname & scheme of the Open Bank API.
 When API Tester (this application) tries to authenticate with Open Bank API
 during oauth1 flow, it sends the REDIRECT_URL along with it which is 

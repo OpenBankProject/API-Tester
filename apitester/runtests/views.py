@@ -367,7 +367,7 @@ class TestConfigurationCreateView(LoginRequiredMixin, CreateView):
 
         # Within successful response we expect there to be paths
         try:
-            swagger_path_items = swagger['paths'].items()
+            swagger_paths_items = swagger['paths'].items()
         except KeyError as err:
             # We probably can extract the reason from the response("swagger")
             response_code = swagger['code']
