@@ -28,13 +28,16 @@
 			</div>
 			<div id="navbar" class="collapse navbar-collapse">
 				<ul class="nav navbar-nav">
+					<li> <a href="{% url 'home' %}" style="position:absolute; margin-left: -70px !important; top:-5px"><img src="{{ logo_url }}" alt="brand"></a></li>
+					<li><a href="{{ API_PORTAL }}">Home</a></li>
 					{% url "runtests-index" as runtests_index_url %}
 					<li{% if runtests_index_url in request.path  %} class="active"{% endif %}><a href="{{ runtests_index_url }}">Run tests</a></li>
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
 					<li>
 {% if user.is_authenticated %}
-                    <p class="navbar-btn"><a href="{% url 'oauth-logout' %}" class="btn btn-default">Logout {{ API_USERNAME }}</a></p>
+                    <!--<p class="navbar-btn"><a href="{% url 'oauth-logout' %}" class="btn btn-default">Logout {{ API_USERNAME }}</a></p>-->
+						<p class="navbar-btn"><span id="navbar-login-username">{{API_USERNAME}}</span>&nbsp;&nbsp;<a href="/logout" class="btn btn-default">Logout</a></p>
 {% endif %}
 					</li>
 				</ul>

@@ -13,6 +13,12 @@ def api_root(request):
     """Returns the configured API_ROOT"""
     return {'API_ROOT': settings.API_ROOT}
 
+def portal_page(request):
+    """Returns the configured API_PORTAL"""
+    if settings.API_PORTAL is None:
+        return {'API_PORTAL': settings.API_HOST}
+    else:
+        return {'API_PORTAL': settings.API_PORTAL}
 
 def api_username(request):
     """Returns the API username of the logged-in user"""
