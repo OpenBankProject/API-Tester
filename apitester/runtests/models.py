@@ -28,8 +28,9 @@ class TestConfiguration(models.Model):
      
     resource_doc_params = models.CharField(
         max_length=255,
-        verbose_name='Paras',
-        help_text='Parameters to limit the endpoint tests that are initially generated in this profile. e.g: functions=getBanks,bankById or tags=Account See the documentation for the getResourceDocsSwagger endpoint in the API Explorer for more information.',        blank=True,
+        verbose_name='Params',
+        help_text='Parameters to limit the endpoint tests that are initially generated in this profile. e.g: functions=getBanks,bankById or tags=Account See the documentation for the getResourceDocsSwagger endpoint in the API Explorer for more information.',
+        blank=True,
         null=True,
     )
     owner = models.ForeignKey(
