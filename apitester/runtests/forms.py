@@ -31,12 +31,12 @@ class TestConfigurationForm(forms.ModelForm):
 
     api_version = forms.CharField(
         label='API Version',
-        help_text='Version of the API to initially generate in the format STANDARDvVERSION e.g. OBPv4.0.0',
+        help_text='Version of the API to initially generate in the format STANDARDvVERSION e.g. OBPv5.1.0',
         #validators=[validate_api_standard],
         widget=forms.TextInput(
             attrs={
-                'value': 'OBPv4.0.0',
-                'placeholder': 'OBPv4.0.0',
+                'value': 'OBPv5.1.0',
+                'placeholder': 'OBPv5.1.0',
                 'class': 'form-control'
             }
         ),

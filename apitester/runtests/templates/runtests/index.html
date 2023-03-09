@@ -126,16 +126,16 @@
 	<div class="hide" id="run-buttons">
 		<div class="row">
 			<div class="col-xs-12 col-sm-4">
-				<button class="btn btn-success form-control" id="run">Run all Selected</button>
+				<button class="btn btn-success form-control" id="run">Run all Selected APIs</button>
 			</div>
 			<div class="col-xs-12 col-sm-2">
-				<button class="btn btn-default form-control" id="checkNone" />Uncheck all</button>
+				<button class="btn btn-default form-control" id="checkNone" />Uncheck APIs</button>
 			</div>
 			<div class="col-xs-12 col-sm-2">
-				<button class="btn btn-default form-control" id="checkAll" />Check all</button>
+				<button class="btn btn-default form-control" id="checkAll" />Check APIs</button>
 			</div>
 			<div class="col-xs-12 col-sm-2">
-				<button class="btn btn-default form-control" id="removeUncheck" />Remove uncheck</button>
+				<button class="btn btn-default form-control" id="removeUncheck" />Remove uncheck APIs</button>
 			</div>
 			<div class="col-xs-2">
 				<label>Repeat: </label> <input type="text" id="numRun" size="1" value="" />
@@ -181,11 +181,11 @@
 					<div class="col-xs-1"><input  class="form-control" type="hidden" name="replica_id" size="1" value="{{  call.replica_id  }}" /></div>
 					<div class="col-xs-1">{{ call.method |upper}}<input  class="form-control" type="hidden" name="method" size="1" value="{{  call.method  }}" /></div>
 					<div class="col-xs-1 col-sm-1">
-						<button class="btn btn-success forTest" id="forTest"> Run </button>
-						<button class="btn btn-default forCopy" id="forCopy">Copy </button>
+						<button class="btn btn-success forTest" id="forTest" style="width:65px"> Run </button>
+						<button class="btn btn-default forCopy" id="forCopy" style="width:65px">Copy </button>
 
-						<button class="btn btn-default forDelete" id="forDelete">Delete</button>
-						<button class="btn btn-default forSave" id="forSave">Save </button><span style="display: none;margin-left: 5px;background-color:#00cc00">saved.</span>
+						<button class="btn btn-default forDelete" id="forDelete" style="width:65px">Delete</button>
+						<button class="btn btn-default forSave" id="forSave" style="width:65px">Save </button><span style="display: none;margin-left: 5px;background-color:#00cc00">saved.</span>
 					</div>
 					<div class="col-xs-12 col-sm-9 result"></div>
 

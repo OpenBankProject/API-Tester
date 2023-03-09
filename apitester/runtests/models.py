@@ -28,8 +28,8 @@ class TestConfiguration(models.Model):
      
     resource_doc_params = models.CharField(
         max_length=255,
-        verbose_name='Params',
-        help_text='Parameters to limit the endpoint tests that are initially generated in this profile. e.g: functions=getBanks,bankById or tags=Account See the documentation for the getResourceDocsSwagger endpoint in the API Explorer for more information.',
+        verbose_name='Parameters',
+        help_text=f'<a href = "{settings.API_EXPLORER_HOST}?version=OBPv{settings.API_VERSION}&operation_id=OBPv1_4_0-getResourceDocsObp&currentTag=Documentation&locale=en_GB#OBPv1_4_0-getResourceDocsObp"> Parameters to limit the endpoint tests that are initially generated in this profile. e.g: functions=getBanks,bankById or tags=Account See the documentation for the getResourceDocsSwagger endpoint in the API Explorer for more information.</a>',
         blank=True,
         null=True,
     )
