@@ -184,9 +184,11 @@ OAUTH_AUTHORIZATION_PATH = '/oauth/authorize'
 OAUTH_ACCESS_TOKEN_PATH = '/oauth/token'
 
 DIRECTLOGIN_PATH = '/my/logins/direct'
+ALLOW_DIRECT_LOGIN = True
 
 # Set to true if the API is connected to a core banking system
 GATEWAYLOGIN_HAS_CBS = False
+ALLOW_GATEWAY_LOGIN = False
 
 API_HOST = 'http://127.0.0.1:8080'
 API_PORTAL = API_HOST

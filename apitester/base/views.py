@@ -18,7 +18,9 @@ class HomeView(TemplateView):
         context.update({
             'API_HOST': settings.API_HOST,
             'directlogin_form': DirectLoginForm(),
+            'ALLOW_DIRECT_LOGIN':settings.ALLOW_DIRECT_LOGIN,
             'gatewaylogin_form': GatewayLoginForm(),
+            'ALLOW_GATEWAY_LOGIN': settings.ALLOW_GATEWAY_LOGIN,
             'override_css_url': settings.OVERRIDE_CSS_URL,
             'logo_url': settings.LOGO_URL,
         })
