@@ -192,6 +192,7 @@ ALLOW_GATEWAY_LOGIN = False
 
 API_HOST = 'http://127.0.0.1:8080'
 API_PORTAL = API_HOST
+
 #API_HOST = 'https://apisandbox.openbankproject.com'
 API_BASE_PATH = '/obp/v'
 API_VERSION = '5.1.0'
