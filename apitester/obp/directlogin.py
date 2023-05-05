@@ -10,6 +10,7 @@ from django.conf import settings
 
 from .authenticator import Authenticator, AuthenticatorError
 
+from apitester import local_settings
 
 class DirectLoginAuthenticator(Authenticator):
     """Implements a DirectLogin authenticator to the API"""
@@ -25,6 +26,7 @@ class DirectLoginAuthenticator(Authenticator):
 
         data is a dict which contains keys username, password and consumer_key
         """
+        data['consumer_key']=local_settings.OAUTH_CONSUMER_KEY
         url = settings.API_HOST + settings.DIRECTLOGIN_PATH
         authorization = 'DirectLogin username="{}",password="{}",consumer_key="{}"'.format(  # noqa
             data['username'],

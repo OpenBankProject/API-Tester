@@ -11,7 +11,7 @@ import time
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.exceptions import PermissionDenied 
+from django.core.exceptions import PermissionDenied
 from django.http import JsonResponse, HttpResponse
 from django.urls import reverse_lazy, reverse
 from django.views.generic import TemplateView
@@ -21,6 +21,7 @@ from obp.api import API, APIError
 import logging
 from .forms import TestConfigurationForm
 from .models import TestConfiguration, ProfileOperation
+from base.views import get_api_versions
 
 
 
@@ -353,13 +354,13 @@ class TestConfigurationCreateView(LoginRequiredMixin, CreateView):
     def get_success_url(self):
         testconfig = self.get_testconfigs(self.object.pk)['selected']
         self.api = API(self.request.session.get('obp'))
-        
+
         api_version = testconfig.api_version
         resource_doc_params = testconfig.resource_doc_params
 
         #print ("api_version is {}".format(api_version))
         #print ("resource_doc_params is {}".format(resource_doc_params))
-        
+
         swagger = self.api.get_swagger(api_version, resource_doc_params)
 
         #print("the swagger is {}".format(swagger))
@@ -408,7 +409,7 @@ class TestConfigurationCreateView(LoginRequiredMixin, CreateView):
             except Exception as e:
                 #TODO, maybe later, we can show this to the HTML.
                 logging.error("this endpoint (path = {}) can not be used in API_Tester, check the format.".format(str(path)))
-                logging.error("the reason is : {}".format(e)) 
+                logging.error("the reason is : {}".format(e))
 
         return reverse('runtests-index-testconfig', kwargs={
             'testconfig_pk': self.object.pk,
@@ -418,7 +419,6 @@ class TestConfigurationCreateView(LoginRequiredMixin, CreateView):
 class TestConfigurationUpdateView(LoginRequiredMixin, UpdateView):
     model = TestConfiguration
     form_class = TestConfigurationForm
-
     def get_object(self, **kwargs):
         object = super(TestConfigurationUpdateView, self).get_object(**kwargs)
         if self.request.user != object.owner:
@@ -433,6 +433,37 @@ class TestConfigurationUpdateView(LoginRequiredMixin, UpdateView):
         return reverse('runtests-index-testconfig', kwargs={
             'testconfig_pk': self.object.pk,
         })
+
+    def dispatch(self, request, *args, **kwargs):
+        self.api = API(request.session.get('obp'))
+        print("self.api", self.api)
+        return super(TestConfigurationUpdateView, self).dispatch(request, *args, **kwargs)
+
+    def get_form(self, *args, **kwargs):
+        form = super(TestConfigurationUpdateView, self).get_form(*args, **kwargs)
+        print("form is from get_form", form)
+        # Cannot add api in constructor: super complains about unknown kwarg
+        form.api = self.api
+        print("form.api is", form.api)
+        fields = form.fields
+        print("fields are", fields)
+        try:
+            fields['api_version'].choices = self.api.get_api_version_choices()
+            print("Choices", self.api.get_api_version_choices())
+        except APIError as err:
+            messages.error(self.request, err)
+        except Exception as err:
+            messages.error(self.request, err)
+        print("form from get_form", form)
+        return form
+
+    def get_context_data(self, **kwargs):
+        context = super(TestConfigurationUpdateView, self).get_context_data(**kwargs)
+        context.update({
+            'API_VERSION': get_api_versions(self.request)
+        })
+        print("context is", context)
+        return context
 
 
 class TestConfigurationDeleteView(LoginRequiredMixin, DeleteView):

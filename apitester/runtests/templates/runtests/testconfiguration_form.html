@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block page_title %}{{ block.super }} / Edit test configuration{% endblock page_title %}
+{% block page_title %}{{ block.super }} / Edit Test Configuration{% endblock page_title %}
 
 {% block content %}
 <div id="runtests">
-	<h1>Edit test profile</h1>
+	<h1>Edit Test Profile</h1>
 	<form action="" method="post">
 		{% csrf_token %}
 		{% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
@@ -177,15 +177,15 @@
 		</div>
 
 		<input class="btn btn-primary" type="submit" value="Submit" />
-	{% if object.pk %}
+		{% if object.pk %}
 		<a href="{% url 'runtests-index-testconfig' testconfig_pk=object.pk %}" class="btn btn-secondary">Cancel</a>
-	{% else %}
+		{% else %}
 		<a href="{% url 'runtests-index' %}" class="btn btn-secondary">Cancel</a>
-	{% endif %}
+		{% endif %}
 	</form>
 </div>
 {% endblock content %}
 
 {% block extracss %}
-		<link href="{% static 'runtests/css/runtests.css' %}" rel="stylesheet">
+<link href="{% static 'runtests/css/runtests.css' %}" rel="stylesheet">
 {% endblock extracss %}
