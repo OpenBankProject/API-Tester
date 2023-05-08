@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block page_title %}{{ block.super }} / Edit test configuration{% endblock page_title %}
+{% block page_title %}{{ block.super }} / Edit Test Configuration{% endblock page_title %}
 
 {% block content %}
 <div id="runtests">
-	<h1>Edit test profile</h1>
+	<h1>Edit Test Profile</h1>
 	<form action="" method="post">
 		{% csrf_token %}
 		{% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}

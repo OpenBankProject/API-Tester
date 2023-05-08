@@ -21,6 +21,7 @@ from obp.api import API, APIError
 import logging
 from .forms import TestConfigurationForm
 from .models import TestConfiguration, ProfileOperation
+from base.views import get_api_versions
 
 
 
@@ -433,6 +434,30 @@ class TestConfigurationUpdateView(LoginRequiredMixin, UpdateView):
         return reverse('runtests-index-testconfig', kwargs={
             'testconfig_pk': self.object.pk,
         })
+
+    def dispatch(self, request, *args, **kwargs):
+            self.api = API(request.session.get('obp'))
+            return super(TestConfigurationUpdateView, self).dispatch(request, *args, **kwargs)
+
+    def get_form(self, *args, **kwargs):
+        form = super(TestConfigurationUpdateView, self).get_form(*args, **kwargs)
+        # Cannot add api in constructor: super complains about unknown kwarg
+        form.api = self.api
+        fields = form.fields
+        try:
+            fields['api_version'].choices = self.api.get_api_version_choices()
+        except APIError as err:
+            messages.error(self.request, err)
+        except Exception as err:
+            messages.error(self.request, err)
+        return form
+
+    def get_context_data(self, **kwargs):
+        context = super(TestConfigurationUpdateView, self).get_context_data(**kwargs)
+        context.update({
+            'API_VERSION': get_api_versions(self.request)
+        })
+        return context
 
 
 class TestConfigurationDeleteView(LoginRequiredMixin, DeleteView):
