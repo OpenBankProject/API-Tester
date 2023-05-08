@@ -18,7 +18,7 @@ class TestConfigurationForm(forms.ModelForm):
     
 
     def clean_api_version(self):
-        allowed_api_versions = ['OBPv4.0.0', 'OBPv3.1.0', 'OBPv3.0.0', 'MXOFv0.0.1', 'BGv1.3']
+        allowed_api_versions = ['OBPv5.1.0', 'OBPv5.0.0', 'OBPv4.0.0', 'OBPv3.1.0', 'OBPv3.0.0', 'MXOFv0.0.1', 'BGv1.3']
 
 
         data = self.cleaned_data['api_version']
