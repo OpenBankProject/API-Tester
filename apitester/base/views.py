@@ -7,7 +7,20 @@ from django.conf import settings
 from django.views.generic import TemplateView
 
 from obp.forms import DirectLoginForm, GatewayLoginForm
+from obp.api import API, APIError
 
+def get_api_versions(request):
+    api = API(request.session.get('obp'))
+    try:
+        urlpath = '/api/versions'
+        result = api.get(urlpath)
+        if 'scanned_api_versions' in result:
+            return [apiversion['API_VERSION'] for apiversion in sorted(result['scanned_api_versions'], key=lambda d: d['API_VERSION'])]
+        else:
+            return []
+    except APIError as err:
+        messages.error(self.request, err)
+        return []
 
 class HomeView(TemplateView):
     """View for home page"""

@@ -18,7 +18,7 @@ class TestConfigurationForm(forms.ModelForm):
     
 
     def clean_api_version(self):
-        allowed_api_versions = ['OBPv4.0.0', 'OBPv3.1.0', 'OBPv3.0.0', 'MXOFv0.0.1', 'BGv1.3']
+        allowed_api_versions = ['OBPv5.1.0', 'OBPv5.0.0', 'OBPv4.0.0', 'OBPv3.1.0', 'OBPv3.0.0', 'MXOFv0.0.1', 'BGv1.3']
 
 
         data = self.cleaned_data['api_version']
@@ -29,17 +29,17 @@ class TestConfigurationForm(forms.ModelForm):
         # this method didn't change it.
         return data
 
-    api_version = forms.CharField(
+    api_version = forms.ChoiceField(
         label='API Version',
-        help_text='Version of the API to initially generate in the format STANDARDvVERSION e.g. OBPv4.0.0',
+        help_text='Version of the API to initially generate in the format STANDARDvVERSION e.g. OBPv5.1.0',
         #validators=[validate_api_standard],
-        widget=forms.TextInput(
+        widget=forms.Select(
             attrs={
-                'value': 'OBPv4.0.0',
-                'placeholder': 'OBPv4.0.0',
+                'placeholder': 'OBPv5.1.0',
                 'class': 'form-control'
             }
         ),
+        choices=[],
         required=False,
     )
 

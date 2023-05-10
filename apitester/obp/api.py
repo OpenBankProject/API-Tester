@@ -196,3 +196,11 @@ class API(object):
             swagger = self.get(urlpath)
             cache.set(urlpath, swagger, settings.CACHE_TIMEOUT)
         return cache.get(urlpath)
+
+    def get_api_version_choices(self):
+        """Gets a list of APIs Version and APIs Version as used by form choices"""
+        choices = [('', ('Choose ...'))]
+        result = self.get('/api/versions')
+        for version in sorted(result['scanned_api_versions'], key=lambda d: d['API_VERSION']) :
+            choices.append((version['API_VERSION'], version['API_VERSION']))
+        return choices
